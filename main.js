@@ -122,25 +122,12 @@ function isDigableAround(x, y){
   return false;
 }
 
-// 行き止まり判定
-function isDeadEnd(x, y){
-  let cnt = 0;
-  if(maze[x-1][y] == 0) cnt++;
-  if(maze[x+1][y] == 0) cnt++;
-  if(maze[x][y-1] == 0) cnt++;
-  if(maze[x][y+1] == 0) cnt++;
-  if(cnt == 3) return true;
-  return false;
-}
-
 // 通路マスでかつまだ掘れるものを保存する配列の更新
 function updateDigables(){
   let tmp = [];
   for(let i=0;i<digables.length;i++){
     if(isDigableAround(digables[i][0],digables[i][1])){
       tmp.push([digables[i][0],digables[i][1]]);
-    }else if(isDeadEnd(digables[i][0],digables[i][1])){
-      deadends.push([digables[i][0],digables[i][1]]);
     }
   }
   digables = tmp;
@@ -171,12 +158,21 @@ function goForward(x, y){
       break;
   }
   maze[x][y] = 1;
-  digables.push([x,y]);
   drawMase();
-  //if(isDigableAround(x,y)) setTimeout(goForward, 0, x, y);
-  //else setTimeout(jenerateMaze, 0);
-  if(isDigableAround(x,y)) goForward(x, y);
-  else addStartingPoint();
+  if(isDigableAround(x,y)){
+    digables.push([x,y]);
+    setTimeout(goForward, 0, x, y);
+  }else{
+    deadends.push([x,y]);
+    setTimeout(addStartingPoint, 0);
+  }
+  /*
+  if(isDigableAround(x,y)){
+    digables.push([x,y]);
+    goForward(x, y);
+  }else{
+    addStartingPoint();
+  }*/
 }
 
 // 穴掘り法
