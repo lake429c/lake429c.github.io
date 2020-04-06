@@ -1,6 +1,6 @@
 'use strict';
 
-// min以上max未満の乱数を得る関数
+// min以上max未満の整数乱数を得る関数
 function getRandomInt(min, max) {
   min = Math.ceil(min);
   max = Math.floor(max);
@@ -10,7 +10,7 @@ function getRandomInt(min, max) {
 //// コモン ////
 
 // 迷路の一辺のサイズ
-const size = 40;
+const size = 50;
 
 /*
   迷路のマスの状態
@@ -71,6 +71,9 @@ drawMase();
 
 //// ジェネレータ ////
 
+let digables = [];
+let deadends = [];
+
 // (x,y)のdirection方向のマスが掘れる
 // 0:左 1:右 2:上 3:下
 function isDigable(x, y, direction){
@@ -119,6 +122,30 @@ function isDigableAround(x, y){
   return false;
 }
 
+// 行き止まり判定
+function isDeadEnd(x, y){
+  let cnt = 0;
+  if(maze[x-1][y] == 0) cnt++;
+  if(maze[x+1][y] == 0) cnt++;
+  if(maze[x][y-1] == 0) cnt++;
+  if(maze[x][y+1] == 0) cnt++;
+  if(cnt == 3) return true;
+  return false;
+}
+
+// 通路マスでかつまだ掘れるものを保存する配列の更新
+function updateDigables(){
+  let tmp = [];
+  for(let i=0;i<digables.length;i++){
+    if(isDigableAround(digables[i][0],digables[i][1])){
+      tmp.push([digables[i][0],digables[i][1]]);
+    }else if(isDeadEnd(digables[i][0],digables[i][1])){
+      deadends.push([digables[i][0],digables[i][1]]);
+    }
+  }
+  digables = tmp;
+}
+
 // 一歩進む
 function goForward(x, y){
 
@@ -131,79 +158,42 @@ function goForward(x, y){
   // 決めた方向に進む
   switch (direction) {
     case 0:
-      maze[x][y-1] = 1;
       y--;
       break;
     case 1:
-      maze[x][y+1] = 1;
       y++;
       break;
     case 2:
-      maze[x-1][y] = 1;
       x--;
       break;
     case 3:
-      maze[x+1][y] = 1;
       x++;
       break;
   }
+  maze[x][y] = 1;
+  digables.push([x,y]);
   drawMase();
   //if(isDigableAround(x,y)) setTimeout(goForward, 0, x, y);
   //else setTimeout(jenerateMaze, 0);
   if(isDigableAround(x,y)) goForward(x, y);
-  else jenerateMaze();
-}
-
-// 掘り終わった判定
-// どの通路マスも周りが掘れないなら終了
-function isDone(){
-  let cnt = 0;
-  for(let i=1;i<size-1;i++){
-    for(let j=1;j<size-1;j++){
-      if(maze[i][j] != 0 && isDigableAround(i,j)) {
-        return false;
-      }
-    }
-  }
-  return true;
-}
-
-// 行き止まり判定
-function isDeadEnd(x, y){
-  let cnt = 0;
-  if(maze[x-1][y] == 0) cnt++;
-  if(maze[x+1][y] == 0) cnt++;
-  if(maze[x][y-1] == 0) cnt++;
-  if(maze[x][y+1] == 0) cnt++;
-  if(cnt == 3) return true;
-  return false;
+  else addStartingPoint();
 }
 
 // 穴掘り法
-function jenerateMaze(){
+function addStartingPoint(){
 
-  let x = getRandomInt(1, size-1), y = getRandomInt(1, size-1);
-
-  if(!isDone()){
+  updateDigables();
+  if(digables.length != 0){
     // 掘り始める通路マスを決める
-    while(!(maze[x][y] == 1 && isDigableAround(x,y))){
-      x = getRandomInt(1,size-1);
-      y = getRandomInt(1,size-1);
-    }
-    goForward(x, y);
+    let index = getRandomInt(0,digables.length);
+    goForward(digables[index][0], digables[index][1]);
   }else{
     //スタートの設定
-    while(!(maze[x][y] == 1 && isDeadEnd(x, y))){
-      x = getRandomInt(1,size);
-      y = getRandomInt(1,size);
-    }
-    maze[x][y] = 2;
+    let indexS = getRandomInt(0,deadends.length/2);
+    maze[deadends[indexS][0]][deadends[indexS][1]] = 2;
     // ゴールの設定
-    while(!(maze[x][y] == 1 && isDeadEnd(x, y))){
-      x = getRandomInt(1,size);
-      y = getRandomInt(1,size);
-    }
-    maze[x][y] = 3;
+    let indexG = getRandomInt(deadends.length/2,deadends.length);
+    maze[deadends[indexG][0]][deadends[indexG][1]] = 3;
 
     drawMase();
     console.log("Jenerated");
@@ -213,8 +203,14 @@ function jenerateMaze(){
   }
 }
 
-// 最初に一マス穴開ける
-maze[getRandomInt(1,size-1)][getRandomInt(1,size-1)] = 1;
+function jenerateMaze() {
+  // 最初に一マス穴開ける
+  let x = getRandomInt(1,size-1), y = getRandomInt(1,size-1);
+  maze[x][y] = 1;
+  digables.push([x,y]);
+  addStartingPoint();
+}
+
 jenerateMaze();
 
 //// ソルバー ////
