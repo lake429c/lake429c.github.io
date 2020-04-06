@@ -7,10 +7,12 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
 }
 
-//// コモン ////
+//// 描画 ////
 
 // 迷路の一辺のサイズ
-const size = 50;
+const size = 400;
+// 一マスの一辺のサイズ
+const rect_size = 5;
 
 /*
   迷路のマスの状態
@@ -30,44 +32,39 @@ for(let i=0;i<size;i++){
   maze.push(tmp);
 }
 
-// 迷路を描画する関数
-function drawMase(){
+function setMazeColor(x, y){
   const canvas = document.getElementById('maze_canvas');
   const ctx = canvas.getContext("2d");
+  // マスの色の決定
+  switch (maze[x][y]) {
+    case 0:
+      ctx.fillStyle = "rgb(0,0,0)";
+      break;
+    case 1:
+      ctx.fillStyle = "rgb(255,255,255)";
+      break;
+    case 2:
+      ctx.fillStyle = "rgb(255,0,0)";
+      break;
+    case 3:
+      ctx.fillStyle = "rgb(0,255,0)";
+      break;
+    case 4:
+      ctx.fillStyle = "rgb(0,100,255)";
+      break;
+  }
+  // マスの描画
+  ctx.fillRect(y*rect_size, x*rect_size, rect_size-1, rect_size-1);
+}
 
-  // 一マスの一辺のサイズ
-  const rect_size = 10;
-  // キャンバスの大きさの決定
-  canvas.width = (size+1)*rect_size;
-  canvas.height = (size+1)*rect_size;
-
+// 迷路を描画する関数
+function drawMaze(){
   for(let i=0;i<size;i++){
     for(let j=0;j<size;j++){
-      // マスの色の決定
-      switch (maze[i][j]) {
-        case 0:
-          ctx.fillStyle = "rgb(0,0,0)";
-          break;
-        case 1:
-          ctx.fillStyle = "rgb(255,255,255)";
-          break;
-        case 2:
-          ctx.fillStyle = "rgb(255,0,0)";
-          break;
-        case 3:
-          ctx.fillStyle = "rgb(0,255,0)";
-          break;
-        case 4:
-          ctx.fillStyle = "rgb(0,100,255)";
-          break;
-      }
-      // マスの描画
-      ctx.fillRect(j*rect_size, i*rect_size, rect_size-1, rect_size-1);
+      setMazeColor(i, j);
     }
   }
 }
-
-drawMase();
 
 //// ジェネレータ ////
 
@@ -158,21 +155,16 @@ function goForward(x, y){
       break;
   }
   maze[x][y] = 1;
-  drawMase();
+  setMazeColor(x, y);
+
   if(isDigableAround(x,y)){
     digables.push([x,y]);
-    setTimeout(goForward, 0, x, y);
+    //setTimeout(goForward, 0, x, y);
+    goForward(x,y);
   }else{
     deadends.push([x,y]);
     setTimeout(addStartingPoint, 0);
   }
-  /*
-  if(isDigableAround(x,y)){
-    digables.push([x,y]);
-    goForward(x, y);
-  }else{
-    addStartingPoint();
-  }*/
 }
 
 // 穴掘り法
@@ -187,11 +179,12 @@ function addStartingPoint(){
     //スタートの設定
     let indexS = getRandomInt(0,deadends.length/2);
     maze[deadends[indexS][0]][deadends[indexS][1]] = 2;
+    setMazeColor(deadends[indexS][0], deadends[indexS][1]);
     // ゴールの設定
     let indexG = getRandomInt(deadends.length/2,deadends.length);
     maze[deadends[indexG][0]][deadends[indexG][1]] = 3;
+    setMazeColor(deadends[indexG][0], deadends[indexG][1]);
 
-    drawMase();
     console.log("Jenerated");
     // ボタンにクリックイベントを紐づけ
     let solveEle = document.getElementById('solveBt');
@@ -199,41 +192,149 @@ function addStartingPoint(){
   }
 }
 
+// 穴掘り法で迷路を生成する関数
 function jenerateMaze() {
+  const canvas = document.getElementById('maze_canvas');
+  const ctx = canvas.getContext("2d");
+  // キャンバスの大きさの決定
+  canvas.width = (size+1)*rect_size;
+  canvas.height = (size+1)*rect_size;
+  drawMaze();
   // 最初に一マス穴開ける
   let x = getRandomInt(1,size-1), y = getRandomInt(1,size-1);
   maze[x][y] = 1;
+  setMazeColor(x, y);
   digables.push([x,y]);
+  // 穴を掘り始める
   addStartingPoint();
 }
 
 jenerateMaze();
 
-//// ソルバー ////
+//// テスター ////
 
-// 幅優先探索のキュー
-let que = [];
-// 探索済みフラグ
-let checked = [];
-for(let i=0;i<size;i++){
-  let tmp = [];
-  for(let j=0;j<size;j++){
-    tmp.push(false);
+/*
+0:壁 1~:未探索通路 ~-1:探索済み通路
+*/
+let testMaze;
+
+function checkLoop(x, y){
+  let loopFlag = false;
+  let cnt = 0;
+  // 自身を探索済みに
+  testMaze[x][y] = -1;
+  if(y-1 != 0 && testMaze[x][y-1] >= 1){
+    loopFlag = checkLoop(x, y-1);
+  }else if(testMaze[x][y-1] == -1){
+    cnt++;
   }
-  checked.push(tmp);
-}
-// スタートからの距離
-let dist = [];
-for(let i=0;i<size;i++){
-  let tmp = [];
-  for(let j=0;j<size;j++){
-    tmp.push(size*size);
+  if(y+1 != size-1 && testMaze[x][y+1] >= 1){
+    loopFlag = checkLoop(x, y+1);
+  }else if(testMaze[x][y+1] == -1){
+    cnt++;
   }
-  dist.push(tmp);
+  if(x-1 != 0 && testMaze[x-1][y] >= 1){
+    loopFlag = checkLoop(x-1, y);
+  }else if(testMaze[x-1][y] == -1){
+    cnt++;
+  }
+  if(x+1 != size-1 && testMaze[x+1][y] >= 1){
+    loopFlag = checkLoop(x+1, y);
+  }else if(testMaze[x+1][y] == -1){
+    cnt++;
+  }
+  // 後ろ以外に探索済みの通路に当たったらループになっている
+  if(cnt > 1) return true;
+  return loopFlag;
 }
+
+function checkClosed(){
+  for(let i=0;i<size;i++){
+    for(let j=0;j<size;j++){
+      // ループチェックをした後，探索していない通路が残っていたら閉じた領域ができている
+      if(testMaze[i][j] == 1) return true;
+    }
+  }
+  return false;
+}
+
+// 通路の幅が1マスであることの確認
+// 自身と左上・右上・左下・右下を対角とするそれぞれの四角の中ですべてが通路マスのものがあれば通路幅が1マスでない
+function checkWidth(x, y){
+  let widthFlag = true;
+  // 自身を探索済みに
+  testMaze[x][y] = -2;
+  if(testMaze[x][y-1] == -1 && testMaze[x-1][y-1] == -1 && testMaze[x-1][y] == -1){
+    return false;
+  }
+  if(testMaze[x][y+1] == -1 && testMaze[x-1][y+1] == -1 && testMaze[x-1][y] == -1){
+    return false;
+  }
+  if(testMaze[x][y-1] == -1 && testMaze[x+1][y-1] == -1 && testMaze[x+1][y] == -1){
+    return false;
+  }
+  if(testMaze[x][y+1] == -1 && testMaze[x+1][y+1] == -1 && testMaze[x+1][y] == -1){
+    return false;
+  }
+  if(y-1 != 0 && testMaze[x][y-1] == -1){
+    widthFlag = checkWidth(x, y-1);
+  }
+  if(y+1 != size-1 && testMaze[x][y+1] == -1){
+    widthFlag = checkWidth(x, y+1);
+  }
+  if(x-1 != 0 && testMaze[x-1][y] == -1){
+    widthFlag = checkWidth(x-1, y);
+  }
+  if(x+1 != size-1 && testMaze[x+1][y] == -1){
+    widthFlag = checkWidth(x+1, y);
+  }
+  return widthFlag;
+}
+
+function test(){
+  // テスト用にディープコピー
+  testMaze = JSON.parse(JSON.stringify(maze));
+  let checkStart;
+  for(let i=0;i<size;i++){
+    for(let j=0;j<size;j++){
+      if(testMaze[i][j] == 1){
+        checkStart = [i, j];
+        break;
+      }
+    }
+  }
+  if(checkLoop(checkStart[0], checkStart[1])) console.log("Loop exist");
+  else if(checkClosed()) console.log("Closed area exist");
+  else if(!checkWidth(checkStart[0], checkStart[1])) console.log("Large path exist");
+  else console.log("No problem");
+}
+
+//// ソルバー ////
 
 // 幅優先探索で迷路を解く
 function solveMaze(){
+
+  // 幅優先探索のキュー
+  let que = [];
+  // 探索済みフラグ
+  let checked = [];
+  // スタートからの距離
+  let dist = [];
+  // 初期化
+  for(let i=0;i<size;i++){
+    let tmp = [];
+    for(let j=0;j<size;j++){
+      tmp.push(false);
+    }
+    checked.push(tmp);
+  }
+  for(let i=0;i<size;i++){
+    let tmp = [];
+    for(let j=0;j<size;j++){
+      tmp.push(size*size);
+    }
+    dist.push(tmp);
+  }
 
   let x, y;
   let cnt = 0;
@@ -289,13 +390,16 @@ function solveMaze(){
     else if(maze[x][y+1] != 0 && dist[x][y+1] < dist[x][y]){
       y++;
     }
-    if(maze[x][y] != 2) maze[x][y] = 4;
+    if(maze[x][y] != 2){
+      maze[x][y] = 4;
+    }
   }
-  drawMase();
+  drawMaze();
   console.log("Solved!");
 }
 
 // solveボタンの実装
 function onSolveClick(){
+  test();
   solveMaze();
 }
