@@ -66,6 +66,119 @@ function drawMaze(){
   }
 }
 
+//// テスター ////
+
+/*
+0:壁 1~:未探索通路 ~-1:探索済み通路
+*/
+let testMaze;
+
+// ループしている通路がないかの確認
+function checkLoop(x, y){
+  let loopFlag = false;
+  let cnt = 0;
+  // 自身を探索済みに
+  testMaze[x][y] = -1;
+  if(y-1 != 0 && testMaze[x][y-1] >= 1){
+    loopFlag = checkLoop(x, y-1);
+  }else if(testMaze[x][y-1] == -1){
+    cnt++;
+  }
+  if(y+1 != size-1 && testMaze[x][y+1] >= 1){
+    loopFlag = checkLoop(x, y+1);
+  }else if(testMaze[x][y+1] == -1){
+    cnt++;
+  }
+  if(x-1 != 0 && testMaze[x-1][y] >= 1){
+    loopFlag = checkLoop(x-1, y);
+  }else if(testMaze[x-1][y] == -1){
+    cnt++;
+  }
+  if(x+1 != size-1 && testMaze[x+1][y] >= 1){
+    loopFlag = checkLoop(x+1, y);
+  }else if(testMaze[x+1][y] == -1){
+    cnt++;
+  }
+  // 後ろ以外に探索済みの通路に当たったらループになっている
+  if(cnt > 1) return true;
+  return loopFlag;
+}
+
+// 外壁を除いて，壁に囲まれ孤立した通路がないことの確認
+// ループチェックをした後，探索していない通路が残っていたら閉じた領域ができている
+function checkClosed(){
+  for(let i=0;i<size;i++){
+    for(let j=0;j<size;j++){
+      if(testMaze[i][j] >= 1) return true;
+    }
+  }
+  return false;
+}
+
+// 通路の幅が1マスであることの確認
+// 自身と左上・右上・左下・右下を対角とするそれぞれの四角の中ですべてが通路マスのものがあれば通路幅が1マスでない
+function checkWidth(x, y){
+  let widthFlag = true;
+  // 自身を探索済みに
+  testMaze[x][y] = -2;
+  if(testMaze[x][y-1] <= -1
+    && testMaze[x-1][y-1] <= -1
+    && testMaze[x-1][y] <= -1){
+    return false;
+  }
+  if(testMaze[x][y+1] <= -1
+    && testMaze[x-1][y+1] <= -1
+    && testMaze[x-1][y] <= -1){
+    return false;
+  }
+  if(testMaze[x][y-1] <= -1
+    && testMaze[x+1][y-1] <= -1
+    && testMaze[x+1][y] <= -1){
+    return false;
+  }
+  if(testMaze[x][y+1] <= -1
+    && testMaze[x+1][y+1] <= -1
+    && testMaze[x+1][y] <= -1){
+    return false;
+  }
+  if(y-1 != 0 && testMaze[x][y-1] == -1){
+    widthFlag = checkWidth(x, y-1);
+  }
+  if(y+1 != size-1 && testMaze[x][y+1] == -1){
+    widthFlag = checkWidth(x, y+1);
+  }
+  if(x-1 != 0 && testMaze[x-1][y] == -1){
+    widthFlag = checkWidth(x-1, y);
+  }
+  if(x+1 != size-1 && testMaze[x+1][y] == -1){
+    widthFlag = checkWidth(x+1, y);
+  }
+  return widthFlag;
+}
+
+function test(){
+  // テスト用にディープコピー
+  testMaze = JSON.parse(JSON.stringify(maze));
+  // 通路マスを見つける
+  let checkStart;
+  for(let i=0;i<size;i++){
+    for(let j=0;j<size;j++){
+      if(testMaze[i][j] == 1){
+        checkStart = [i, j];
+        break;
+      }
+    }
+  }
+  if(checkLoop(checkStart[0], checkStart[1])) console.log("Loop exist");
+  else if(checkClosed()) console.log("Closed area exist");
+  else if(!checkWidth(checkStart[0], checkStart[1])) console.log("Large path exist");
+  else{
+    console.log("No problem");
+    return true;
+  }
+  return false;
+}
+
 //// ジェネレータ ////
 
 let digables = [];
@@ -164,6 +277,7 @@ function goForward(x, y){
   }else{
     deadends.push([x,y]);
     setTimeout(addStartingPoint, 0);
+    //addStartingPoint();
   }
 }
 
@@ -185,10 +299,12 @@ function addStartingPoint(){
     maze[deadends[indexG][0]][deadends[indexG][1]] = 3;
     setMazeColor(deadends[indexG][0], deadends[indexG][1]);
 
-    console.log("Jenerated");
-    // ボタンにクリックイベントを紐づけ
-    let solveEle = document.getElementById('solveBt');
-    solveEle.onclick = onSolveClick;
+    if(test()){
+      console.log("Jenerated");
+      // ボタンにクリックイベントを紐づけ
+      let solveEle = document.getElementById('solveBt');
+      solveEle.onclick = onSolveClick;
+    }
   }
 }
 
@@ -210,104 +326,6 @@ function jenerateMaze() {
 }
 
 jenerateMaze();
-
-//// テスター ////
-
-/*
-0:壁 1~:未探索通路 ~-1:探索済み通路
-*/
-let testMaze;
-
-function checkLoop(x, y){
-  let loopFlag = false;
-  let cnt = 0;
-  // 自身を探索済みに
-  testMaze[x][y] = -1;
-  if(y-1 != 0 && testMaze[x][y-1] >= 1){
-    loopFlag = checkLoop(x, y-1);
-  }else if(testMaze[x][y-1] == -1){
-    cnt++;
-  }
-  if(y+1 != size-1 && testMaze[x][y+1] >= 1){
-    loopFlag = checkLoop(x, y+1);
-  }else if(testMaze[x][y+1] == -1){
-    cnt++;
-  }
-  if(x-1 != 0 && testMaze[x-1][y] >= 1){
-    loopFlag = checkLoop(x-1, y);
-  }else if(testMaze[x-1][y] == -1){
-    cnt++;
-  }
-  if(x+1 != size-1 && testMaze[x+1][y] >= 1){
-    loopFlag = checkLoop(x+1, y);
-  }else if(testMaze[x+1][y] == -1){
-    cnt++;
-  }
-  // 後ろ以外に探索済みの通路に当たったらループになっている
-  if(cnt > 1) return true;
-  return loopFlag;
-}
-
-function checkClosed(){
-  for(let i=0;i<size;i++){
-    for(let j=0;j<size;j++){
-      // ループチェックをした後，探索していない通路が残っていたら閉じた領域ができている
-      if(testMaze[i][j] == 1) return true;
-    }
-  }
-  return false;
-}
-
-// 通路の幅が1マスであることの確認
-// 自身と左上・右上・左下・右下を対角とするそれぞれの四角の中ですべてが通路マスのものがあれば通路幅が1マスでない
-function checkWidth(x, y){
-  let widthFlag = true;
-  // 自身を探索済みに
-  testMaze[x][y] = -2;
-  if(testMaze[x][y-1] == -1 && testMaze[x-1][y-1] == -1 && testMaze[x-1][y] == -1){
-    return false;
-  }
-  if(testMaze[x][y+1] == -1 && testMaze[x-1][y+1] == -1 && testMaze[x-1][y] == -1){
-    return false;
-  }
-  if(testMaze[x][y-1] == -1 && testMaze[x+1][y-1] == -1 && testMaze[x+1][y] == -1){
-    return false;
-  }
-  if(testMaze[x][y+1] == -1 && testMaze[x+1][y+1] == -1 && testMaze[x+1][y] == -1){
-    return false;
-  }
-  if(y-1 != 0 && testMaze[x][y-1] == -1){
-    widthFlag = checkWidth(x, y-1);
-  }
-  if(y+1 != size-1 && testMaze[x][y+1] == -1){
-    widthFlag = checkWidth(x, y+1);
-  }
-  if(x-1 != 0 && testMaze[x-1][y] == -1){
-    widthFlag = checkWidth(x-1, y);
-  }
-  if(x+1 != size-1 && testMaze[x+1][y] == -1){
-    widthFlag = checkWidth(x+1, y);
-  }
-  return widthFlag;
-}
-
-function test(){
-  // テスト用にディープコピー
-  testMaze = JSON.parse(JSON.stringify(maze));
-  let checkStart;
-  for(let i=0;i<size;i++){
-    for(let j=0;j<size;j++){
-      if(testMaze[i][j] == 1){
-        checkStart = [i, j];
-        break;
-      }
-    }
-  }
-  if(checkLoop(checkStart[0], checkStart[1])) console.log("Loop exist");
-  else if(checkClosed()) console.log("Closed area exist");
-  else if(!checkWidth(checkStart[0], checkStart[1])) console.log("Large path exist");
-  else console.log("No problem");
-}
 
 //// ソルバー ////
 
@@ -400,6 +418,6 @@ function solveMaze(){
 
 // solveボタンの実装
 function onSolveClick(){
-  test();
+  //test();
   solveMaze();
 }
