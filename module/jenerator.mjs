@@ -1,5 +1,3 @@
-import {Tester} from './tester.mjs'
-
 /*
   迷路のマスの状態
   0:壁（黒）
@@ -135,13 +133,7 @@ export class Jenerator {
       let indexG = this.getRandomInt(this.deadends.length/2,this.deadends.length);
       this.maze[this.deadends[indexG][0]][this.deadends[indexG][1]] = 3;
 
-      //  テストを実行してみて，問題ないか確認
-      const tester = new Tester(this.maze);
-      if(tester.testMaze()){
-        console.log("Jenerated");
-      }else{
-        console.log("Sorry. Please reload this page.");
-      }
+      console.log("Jenerated");
       this.endFlag = false;
     }
   }
