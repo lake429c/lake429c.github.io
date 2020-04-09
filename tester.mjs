@@ -1,5 +1,3 @@
-//// テスター ////
-
 export class Tester {
 
   constructor(maze) {
@@ -94,8 +92,8 @@ export class Tester {
     return widthFlag;
   }
 
-  test(){
-    // 通路マスを見つける
+  testMaze(){
+    // テストを開始する通路マスを見つける
     let checkStart;
     for(let i=0;i<this.maze.length;i++){
       for(let j=0;j<this.maze.length;j++){
@@ -105,6 +103,7 @@ export class Tester {
         }
       }
     }
+    // 各条件を確認
     if(this.hasLoop(checkStart[0], checkStart[1])) console.log("Loop exist");
     else if(this.hasClosedArea()) console.log("Closed area exist");
     else if(this.hasWidePath(checkStart[0], checkStart[1])) console.log("Wide path  exist");

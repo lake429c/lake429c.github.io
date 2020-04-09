@@ -1,13 +1,11 @@
-//// 描画 ////
-
 export class Drawer {
 
-  constructor(maze) {
+  constructor(maze, canvas_name) {
     this.maze = maze;
     // 一マスの一辺のサイズ
     this.rect_size = 5;
     // キャンバスの設定
-    this.canvas = document.getElementById('maze_canvas');
+    this.canvas = document.getElementById(canvas_name);
     this.ctx = this.canvas.getContext("2d");
     this.canvas.width = (this.maze.length+2)*this.rect_size;
     this.canvas.height = (this.maze.length+2)*this.rect_size;
