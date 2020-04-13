@@ -37,6 +37,12 @@ export class Drawer {
       case 4:
         this.ctx.fillStyle = "rgb(0,100,255)";
         break;
+      case 5:
+        this.ctx.fillStyle = "rgb(200,0,200)";
+        break;
+      case 6:
+        this.ctx.fillStyle = "rgb(100,50,220)";
+        break;
     }
     // マスの描画
     this.ctx.fillRect(y*this.rect_size, x*this.rect_size, this.rect_size-1, this.rect_size-1);
@@ -50,5 +56,6 @@ export class Drawer {
       }
     }
   }
+
 
 }

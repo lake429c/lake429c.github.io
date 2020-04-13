@@ -31,3 +31,33 @@ if(tester.testMaze()){
 }else{
   console.log("Sorry. Please reload this page.");
 }
+
+
+let canvas = document.getElementById('maze_canvas'); // canvas要素(HTMLCanvasElement)
+let ctx; // 2Dコンテキスト(CanvasRenderingContext2D)
+//var canvasW = 400; // canvas要素の横幅(px)
+//var canvasH = 400; // canvas要素の縦幅(px)
+let mouseX; // 最後にクリックされた位置のx座標
+let mouseY; // 最後にクリックされた位置のy座標
+let rect_size = 8;
+
+function click_maze(e) {
+
+  // クリック位置の座標計算（canvasの左上を基準）
+  let rect = e.target.getBoundingClientRect();
+  mouseX = e.clientX - Math.floor(rect.left);
+  mouseY = e.clientY - Math.floor(rect.top);
+
+  // クリック位置のマスを塗る
+  let y = Math.floor(mouseX/rect_size);
+  let x = Math.floor(mouseY/rect_size);
+  if(maze[x][y] == 1){
+    maze[x][y] = 5;
+  }else if(maze[x][y] == 5){
+    maze[x][y] = 1;
+  }
+  drawer.drawSquare(x, y);
+
+}
+//window.onload = drawer.click_maze();
+canvas.addEventListener('click', click_maze, false);

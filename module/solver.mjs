@@ -84,7 +84,11 @@ export class Solver{
         y++;
       }
       if(this.maze[x][y] != 2){
-        this.maze[x][y] = 4;
+        if(this.maze[x][y] == 5){
+          this.maze[x][y] = 6;
+        }else{
+          this.maze[x][y] = 4;
+        }
       }
     }
     console.log("Solved!");
