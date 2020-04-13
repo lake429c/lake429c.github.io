@@ -5,7 +5,7 @@ import {Solver} from './module/solver.mjs'
 
 
 // 迷路の一辺のサイズ
-const size = 400;
+const size = 100;
 // 迷路の状態を格納する正方形の二次元配列
 let maze = new Array(size);
 for(let i=0;i<size;i++){

@@ -3,7 +3,7 @@ export class Drawer {
   constructor(maze, canvas_name) {
     this.maze = maze;
     // 一マスの一辺のサイズ
-    this.rect_size = 5;
+    this.rect_size = 8;
     // キャンバスの設定
     this.canvas = document.getElementById(canvas_name);
     this.ctx = this.canvas.getContext("2d");
