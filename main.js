@@ -59,5 +59,5 @@ function click_maze(e) {
   drawer.drawSquare(x, y);
 
 }
-//window.onload = drawer.click_maze();
+//window.onload = click_maze();
 canvas.addEventListener('click', click_maze, false);
