@@ -3,7 +3,7 @@ export class Drawer {
   constructor(maze, canvas_name) {
     this.maze = maze;
     // 一マスの一辺のサイズ
-    this.rect_size = 8;
+    this.rect_size = 10;
     // キャンバスの設定
     this.canvas = document.getElementById(canvas_name);
     this.ctx = this.canvas.getContext("2d");
@@ -18,6 +18,9 @@ export class Drawer {
     2:スタート（赤）
     3:ゴール（緑）
     4:最短路（青）
+    5:キャラのいる位置（紫）
+    6:キャラの通った道（ピンク）
+    7:最短路と通った道の重なり（青ピンク）
   */
   drawSquare(x, y){
     // マスの色の決定
@@ -41,7 +44,10 @@ export class Drawer {
         this.ctx.fillStyle = "rgb(200,0,200)";
         break;
       case 6:
-        this.ctx.fillStyle = "rgb(100,50,220)";
+        this.ctx.fillStyle = "rgb(255,150,150)";
+        break;
+      case 7:
+        this.ctx.fillStyle = "rgb(127,125,202)";
         break;
     }
     // マスの描画
