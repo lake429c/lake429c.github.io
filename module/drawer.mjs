@@ -51,7 +51,8 @@ export class Drawer {
         break;
     }
     // マスの描画
-    this.ctx.fillRect(y*this.rect_size, x*this.rect_size, this.rect_size-1, this.rect_size-1);
+    let border = 0;
+    this.ctx.fillRect(y*this.rect_size, x*this.rect_size, this.rect_size-border, this.rect_size-border);
   }
 
   // 迷路を描画する関数

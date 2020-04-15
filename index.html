@@ -6,7 +6,29 @@
   </head>
 
   <body>
-    <input id = "solveBt" type="button" value="solve"></button>
+    Maze size is : 
+    <input id = "mazeSize" type="text" value = "30" size = "3" maxlength="3">
+    <input id = "jenBt" type="button" value="Janerate"></button>
+    <table>
+	    <tbody>
+		    <tr>
+			    <td></td>
+			    <td><input id = "ArrowUp" type="button" value="↑"></button></td>
+			    <td></td>
+		    </tr>
+		    <tr>
+			    <td><input id = "ArrowLeft" type="button" value="←"></button></td>
+			    <td></td>
+			    <td><input id = "ArrowRight" type="button" value="→"></button></td>
+		    </tr>
+        <tr>
+          <td></td>
+          <td><input id = "ArrowDown" type="button" value="↓"></button></td>
+          <td></td>
+		    </tr>
+	    </tbody>
+    </table>
+    <input id = "solveBt" type="button" value="Solve"></button>
     <div>
       <canvas id="maze_canvas">
       </canvas>
