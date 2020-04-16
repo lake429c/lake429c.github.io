@@ -4,9 +4,23 @@ export class Solver{
     this.maze = maze;
   }
 
+  //
+  deleteChara(){
+    let x, y;
+    // キャラの位置を見つける
+    for(let i=1;i<this.maze.length-1;i++){
+      for(let j=1;j<this.maze.length-1;j++){
+        if(this.maze[i][j] == 5){
+          this.maze[i][j] = 6;
+          break;
+        }
+      }
+    }
+  }
+
   // 幅優先探索で迷路を解く
   solveMaze(){
-
+    this.deleteChara();
     // 幅優先探索のキュー
     let que = [];
     // 探索済みフラグ

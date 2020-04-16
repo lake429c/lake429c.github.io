@@ -39,9 +39,6 @@ document.getElementById('jenBt').onclick = function(){
     console.log("Sorry. Please reload this page.");
   }
 
-
-  let canvas = document.getElementById('maze_canvas');
-
   // スタート地点を探す
   for(let i=1;i<maze.length-1;i++){
     for(let j=1;j<maze.length-1;j++){
@@ -63,178 +60,130 @@ document.getElementById('jenBt').onclick = function(){
       }
     }
   }
-  canvas.addEventListener('click', click_maze, false);
-
-  // 矢印ボタンの実装
-  document.getElementById('ArrowUp').onclick = function(){
-    let x, y;
-    // キャラの位置を見つける
-    for(let i=1;i<maze.length-1;i++){
-      for(let j=1;j<maze.length-1;j++){
-        if(maze[i][j] == 5){
-          x = i;
-          y = j;
-          break;
-        }
-      }
-    }
-    // 行きたい方向が通路やもう通った場所か
-    if(maze[x-1][y] == 1){
-      maze[x][y] = 6;
-      drawer.drawSquare(x, y);
-      maze[x-1][y] = 5;
-      drawer.drawSquare(x-1, y);
-    }else if(maze[x-1][y] == 6){
-      maze[x][y] = 1;
-      drawer.drawSquare(x, y);
-      maze[x-1][y] = 5;
-      drawer.drawSquare(x-1, y);
-    }
-  }
-  document.getElementById('ArrowDown').onclick = function(){
-    let x, y;
-    // キャラの位置を見つける
-    for(let i=1;i<maze.length-1;i++){
-      for(let j=1;j<maze.length-1;j++){
-        if(maze[i][j] == 5){
-          x = i;
-          y = j;
-          break;
-        }
-      }
-    }
-    // 行きたい方向が通路やもう通った場所か
-    if(maze[x+1][y] == 1){
-      maze[x][y] = 6;
-      drawer.drawSquare(x, y);
-      maze[x+1][y] = 5;
-      drawer.drawSquare(x+1, y);
-    }else if(maze[x+1][y] == 6){
-      maze[x][y] = 1;
-      drawer.drawSquare(x, y);
-      maze[x+1][y] = 5;
-      drawer.drawSquare(x+1, y);
-    }
-  }
-  document.getElementById('ArrowLeft').onclick = function(){
-    let x, y;
-    // キャラの位置を見つける
-    for(let i=1;i<maze.length-1;i++){
-      for(let j=1;j<maze.length-1;j++){
-        if(maze[i][j] == 5){
-          x = i;
-          y = j;
-          break;
-        }
-      }
-    }
-    // 行きたい方向が通路やもう通った場所か
-    if(maze[x][y-1] == 1){
-      maze[x][y] = 6;
-      drawer.drawSquare(x, y);
-      maze[x][y-1] = 5;
-      drawer.drawSquare(x, y-1);
-    }else if(maze[x][y-1] == 6){
-      maze[x][y] = 1;
-      drawer.drawSquare(x, y);
-      maze[x][y-1] = 5;
-      drawer.drawSquare(x, y-1);
-    }
-  }
-  document.getElementById('ArrowRight').onclick = function(){
-    let x, y;
-    // キャラの位置を見つける
-    for(let i=1;i<maze.length-1;i++){
-      for(let j=1;j<maze.length-1;j++){
-        if(maze[i][j] == 5){
-          x = i;
-          y = j;
-          break;
-        }
-      }
-    }
-    // 行きたい方向が通路やもう通った場所か
-    if(maze[x][y+1] == 1){
-      maze[x][y] = 6;
-      drawer.drawSquare(x, y);
-      maze[x][y+1] = 5;
-      drawer.drawSquare(x, y+1);
-    }else if(maze[x][y+1] == 6){
-      maze[x][y] = 1;
-      drawer.drawSquare(x, y);
-      maze[x][y+1] = 5;
-      drawer.drawSquare(x, y+1);
-    }
-  }
-}
-
-function click_maze(e) {
-
-  let rect_size = 10;
-  // クリック位置の座標計算（canvasの左上を基準）
-  let rect = e.target.getBoundingClientRect();
-  let mouseX = e.clientX - Math.floor(rect.left);
-  let mouseY = e.clientY - Math.floor(rect.top);
-
-  // クリック位置のマスを塗る
-  let y = Math.floor(mouseX/rect_size);
-  let x = Math.floor(mouseY/rect_size);
-
-  // クリックされたマスはキャラの隣か
-  let nearby_chara = false;
-  if(maze[x-1][y] == 5){
-    nearby_chara = true;
-    if(maze[x][y] == 1){
-      maze[x][y] = 5;
-      drawer.drawSquare(x, y);
-      maze[x-1][y] = 6;
-      drawer.drawSquare(x-1, y);
-    }else if(maze[x][y] == 6){
-      maze[x][y] = 5;
-      drawer.drawSquare(x, y);
-      maze[x-1][y] = 1;
-      drawer.drawSquare(x-1, y);
-    }
-  }else if(maze[x+1][y] == 5){
-    nearby_chara = true;
-    if(maze[x][y] == 1){
-      maze[x][y] = 5;
-      drawer.drawSquare(x, y);
-      maze[x+1][y] = 6;
-      drawer.drawSquare(x+1, y);
-    }else if(maze[x][y] == 6){
-      maze[x][y] = 5;
-      drawer.drawSquare(x, y);
-      maze[x+1][y] = 1;
-      drawer.drawSquare(x+1, y);
-    }
-  }else if(maze[x][y-1] == 5){
-    nearby_chara = true;
-    if(maze[x][y] == 1){
-      maze[x][y] = 5;
-      drawer.drawSquare(x, y);
-      maze[x][y-1] = 6;
-      drawer.drawSquare(x, y-1);
-    }else if(maze[x][y] == 6){
-      maze[x][y] = 5;
-      drawer.drawSquare(x, y);
-      maze[x][y-1] = 1;
-      drawer.drawSquare(x, y-1);
-    }
-  }else if(maze[x][y+1] == 5){
-    nearby_chara = true;
-    if(maze[x][y] == 1){
-      maze[x][y] = 5;
-      drawer.drawSquare(x, y);
-      maze[x][y+1] = 6;
-      drawer.drawSquare(x, y+1);
-    }else if(maze[x][y] == 6){
-      maze[x][y] = 5;
-      drawer.drawSquare(x, y);
-      maze[x][y+1] = 1;
-      drawer.drawSquare(x, y+1);
-    }
-  }
 
 }
-//window.onload = click_maze();
+
+// ボタン入力
+document.getElementById('ArrowUp').onclick = arrowUp;
+document.getElementById('ArrowDown').onclick = arrowDown;
+document.getElementById('ArrowLeft').onclick = arrowLeft;
+document.getElementById('ArrowRight').onclick = arrowRight;
+// キー入力
+document.addEventListener('keydown', (event) => {
+  switch (event.key) {
+    case "ArrowUp":
+      arrowUp();
+      break;
+    case "ArrowDown":
+      arrowDown();
+      break;
+    case "ArrowLeft":
+      arrowLeft();
+      break;
+    case "ArrowRight":
+      arrowRight();
+      break;
+  }
+});
+
+// 矢印ボタンの実装
+function arrowUp(){
+  let x, y;
+  // キャラの位置を見つける
+  for(let i=1;i<maze.length-1;i++){
+    for(let j=1;j<maze.length-1;j++){
+      if(maze[i][j] == 5){
+        x = i;
+        y = j;
+        break;
+      }
+    }
+  }
+  // 行きたい方向が通路やもう通った場所か
+  if(maze[x-1][y] == 1){
+    maze[x][y] = 6;
+    drawer.drawSquare(x, y);
+    maze[x-1][y] = 5;
+    drawer.drawSquare(x-1, y);
+  }else if(maze[x-1][y] == 6){
+    maze[x][y] = 1;
+    drawer.drawSquare(x, y);
+    maze[x-1][y] = 5;
+    drawer.drawSquare(x-1, y);
+  }
+}
+function arrowDown(){
+  let x, y;
+  // キャラの位置を見つける
+  for(let i=1;i<maze.length-1;i++){
+    for(let j=1;j<maze.length-1;j++){
+      if(maze[i][j] == 5){
+        x = i;
+        y = j;
+        break;
+      }
+    }
+  }
+  // 行きたい方向が通路やもう通った場所か
+  if(maze[x+1][y] == 1){
+    maze[x][y] = 6;
+    drawer.drawSquare(x, y);
+    maze[x+1][y] = 5;
+    drawer.drawSquare(x+1, y);
+  }else if(maze[x+1][y] == 6){
+    maze[x][y] = 1;
+    drawer.drawSquare(x, y);
+    maze[x+1][y] = 5;
+    drawer.drawSquare(x+1, y);
+  }
+}
+function arrowLeft(){
+  let x, y;
+  // キャラの位置を見つける
+  for(let i=1;i<maze.length-1;i++){
+    for(let j=1;j<maze.length-1;j++){
+      if(maze[i][j] == 5){
+        x = i;
+        y = j;
+        break;
+      }
+    }
+  }
+  // 行きたい方向が通路やもう通った場所か
+  if(maze[x][y-1] == 1){
+    maze[x][y] = 6;
+    drawer.drawSquare(x, y);
+    maze[x][y-1] = 5;
+    drawer.drawSquare(x, y-1);
+  }else if(maze[x][y-1] == 6){
+    maze[x][y] = 1;
+    drawer.drawSquare(x, y);
+    maze[x][y-1] = 5;
+    drawer.drawSquare(x, y-1);
+  }
+}
+function arrowRight(){
+  let x, y;
+  // キャラの位置を見つける
+  for(let i=1;i<maze.length-1;i++){
+    for(let j=1;j<maze.length-1;j++){
+      if(maze[i][j] == 5){
+        x = i;
+        y = j;
+        break;
+      }
+    }
+  }
+  // 行きたい方向が通路やもう通った場所か
+  if(maze[x][y+1] == 1){
+    maze[x][y] = 6;
+    drawer.drawSquare(x, y);
+    maze[x][y+1] = 5;
+    drawer.drawSquare(x, y+1);
+  }else if(maze[x][y+1] == 6){
+    maze[x][y] = 1;
+    drawer.drawSquare(x, y);
+    maze[x][y+1] = 5;
+    drawer.drawSquare(x, y+1);
+  }
+}
