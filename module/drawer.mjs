@@ -7,8 +7,8 @@ export class Drawer {
     // キャンバスの設定
     this.canvas = document.getElementById(canvas_name);
     this.ctx = this.canvas.getContext("2d");
-    this.canvas.width = (this.maze.length+2)*this.rect_size;
-    this.canvas.height = (this.maze.length+2)*this.rect_size;
+    this.canvas.width = (this.maze.size+2)*this.rect_size;
+    this.canvas.height = (this.maze.size+2)*this.rect_size;
   }
 
   /*
@@ -24,7 +24,7 @@ export class Drawer {
   */
   drawSquare(x, y){
     // マスの色の決定
-    switch (this.maze[x][y]) {
+    switch (this.maze.map[x][y]) {
       case 0:
         this.ctx.fillStyle = "rgb(0,0,0)";
         break;
@@ -57,8 +57,8 @@ export class Drawer {
 
   // 迷路を描画する関数
   drawMaze(){
-    for(let i=0;i<this.maze.length;i++){
-      for(let j=0;j<this.maze.length;j++){
+    for(let i=0;i<this.maze.size;i++){
+      for(let j=0;j<this.maze.size;j++){
         this.drawSquare(i, j);
       }
     }
