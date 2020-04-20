@@ -27,5 +27,10 @@ Maze Jenerator
 答えボタンを押したときに青く表示されるのがゴールまでの道です．
 生成ボタンを押すたびに新しい迷路が生成されます．
 
+## Environment
+以下のブラウザでの動作を確認しています．
+Google Chrome: 81.0.4044.113 (64bit)
+Firefox: 75.0 (64bit)
+
 ## Author
 [木ノ原中也](https://github.com/lake429c)
