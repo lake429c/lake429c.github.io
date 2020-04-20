@@ -120,6 +120,19 @@ export class Jenerator {
       //スタートの設定
       let indexS = this.getRandomInt(0,this.deadends.length/2);
       this.maze.map[this.deadends[indexS][0]][this.deadends[indexS][1]] = 'start';
+      // スタートの隣の通路にキャラを配置
+      this.maze.charaX = this.deadends[indexS][0];
+      this.maze.charaY = this.deadends[indexS][1];
+      if(this.maze.map[this.maze.charaX-1][this.maze.charaY] == 'path'){
+        this.maze.charaX--;
+      }else if(this.maze.map[this.maze.charaX+1][this.maze.charaY] == 'path'){
+        this.maze.charaX++;
+      }else if(this.maze.map[this.maze.charaX][this.maze.charaY -1] == 'path'){
+        this.maze.charaY--;
+      }else if(this.maze.map[this.maze.charaX][this.maze.charaY +1] == 'path'){
+        this.maze.charaY++;
+      }
+      this.maze.map[this.maze.charaX][this.maze.charaY] = 'chara';
       // ゴールの設定
       let indexG = this.getRandomInt(this.deadends.length/2,this.deadends.length);
       this.maze.map[this.deadends[indexG][0]][this.deadends[indexG][1]] = 'goal';

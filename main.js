@@ -5,7 +5,6 @@ import {Solver} from './module/solver.mjs'
 import {Arrows} from './module/arrows.mjs'
 
 let maze = new Vue({
-  el: '#mazeMsg',
   data: {
     charaX: 0,
     charaY: 0,
@@ -14,17 +13,34 @@ let maze = new Vue({
     score: 0
   },
   methods: {
-    change: function(){
-      contents.able = false;
+    init: function() {
+      this.map = new Array(this.size);
+      for(let i=0;i<this.size;i++){
+        this.map[i] = new Array(this.size).fill('wall');
+      }
+    },
+    jenerate: function() {
+      // 迷路を初期化
+      this.init();
+      // 迷路を生成
+      const jenerator = new Jenerator(this);
+      jenerator.jenerateMaze();
+      // 迷路を描画
+      const drawer = new Drawer(this, 'maze_canvas');
+      drawer.drawMaze();
+      contents.ready();
+    },
+    reachGoal: function() {
+      contents.seen = false;
       contents.goalFlg = true;
-      contents.scoreFlg = true;
-      contents.message = 100;
+      contents.solveFlg = true;
+      contents.score = 100;
     }
   }
 })
 
 let inputMazeSize = new Vue({
-  el: '#mazeSize',
+  el: '#inputMazeSize',
   watch: {
     value: function(newVal, oldVal) {
       this.error.require = (newVal.length < 1) ? true : false;
@@ -39,27 +55,48 @@ let inputMazeSize = new Vue({
       tooSmall: false,
       tooLarge: false
     }
+  },
+  methods: {
+    jenerateClick: function(){
+      // 入力された迷路のサイズが不正な場合何もしない
+      if(this.error.require || this.error.tooSmall || this.error.tooLarge){
+        return;
+      }
+      // 迷路の一辺のサイズ
+      maze.size = parseInt(this.value, 10);
+      //
+      maze.jenerate();
+    }
   }
 })
 
-let arrows;
 let contents = new Vue({
   el: '#contents',
   data: {
     seen: false,
-    able: false,
     goalFlg: false,
-    scoreFlg: false,
-    message: 0
+    solveFlg: false,
+    score: 0
   },
   methods: {
-    change: function(){
+    // 迷路が生成されたら矢印ボタンやsolveボタンを表示
+    ready: function(){
       this.seen = true;
-      this.able = true;
       this.goalFlg = false;
-      this.scoreFlg = false;
+      this.solveFlg = false;
     },
-    // 矢印ボタンが押されたらキャラを動かす
+    // solveボタンの実装
+    solveClick: function() {
+      if(this.goalFlg) return;
+      const solver = new Solver(maze);
+      solver.solveMaze();
+      const drawer = new Drawer(maze, 'maze_canvas');
+      drawer.drawMaze();
+      this.seen = false;
+      this.solveFlg = true;
+      this.score = maze.score;
+    },
+    // 矢印ボタンの実装
     arrowUp: function(){
       arrows.arrowUp();
     },
@@ -75,81 +112,10 @@ let contents = new Vue({
   }
 })
 
-function toHankaku(str) {
-  return str.replace(/[Ａ-Ｚａ-ｚ０-９]/g, function(s) {
-      return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
-  });
-}
-
-// Jenerateボタンが押されたら，フォームの数値を大きさとして迷路を生成する
-document.getElementById('jenBt').onclick = function(){
-
-  // 入力された迷路のサイズが不正な場合何もしない
-  if(inputMazeSize.error.require || inputMazeSize.error.tooSmall || inputMazeSize.error.tooLarge){
-    return;
-  }
-  // 迷路の一辺のサイズ
-  let inputMsg = inputMazeSize.value;
-  //inputMsg =  toHankaku(inputMsg);
-  maze.size = parseInt(inputMsg, 10);
-  // 迷路の状態を格納する正方形の二次元配列
-  maze.map = new Array(maze.size);
-  for(let i=0;i<maze.size;i++){
-    maze.map[i] = new Array(maze.size).fill('wall');
-  }
-
-
-  const jenerator = new Jenerator(maze);
-  // 迷路を生成
-  jenerator.jenerateMaze();
-
-  // スタート地点を探す
-  for(let i=1;i<maze.size-1;i++){
-    for(let j=1;j<maze.size-1;j++){
-      if(maze.map[i][j] == 'start'){
-        // スタートの隣の通路にキャラを配置
-        maze.charaX = i;
-        maze.charaY = j;
-        if(maze.map[i-1][j] == 'path'){
-          maze.charaX--;
-        }else if(maze.map[i+1][j] == 'path'){
-          maze.charaX++;
-        }else if(maze.map[i][j-1] == 'path'){
-          maze.charaY--;
-        }else if(maze.map[i][j+1] == 'path'){
-          maze.charaY++;
-        }
-      }
-    }
-  }
-  maze.map[maze.charaX][maze.charaY] = 'chara';
-
-  const drawer = new Drawer(maze, 'maze_canvas');
-  drawer.drawMaze();
-  contents.change();
-
-}
-
-// solveボタンが押されたら最短路を表示する
-document.getElementById('solveBt').onclick = function(){
-  if(contents.goalFlg){
-    return;
-  }
-  const solver = new Solver(maze);
-  solver.solveMaze();
-  const drawer = new Drawer(maze, 'maze_canvas');
-  drawer.drawMaze();
-  contents.able = false;
-  contents.scoreFlg = true;
-  contents.message = maze.score;
-}
-
-// 矢印キーも矢印ボタンと同様
-arrows = new Arrows(maze);
+// 矢印キーの実装
+let arrows = new Arrows(maze);
 document.addEventListener('keydown', (event) => {
-  if(!contents.able){
-    return;
-  }
+  if(!contents.seen) return;
   console.log(event.key);
   switch (event.key) {
     case "ArrowUp":

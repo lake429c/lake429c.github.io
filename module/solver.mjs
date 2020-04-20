@@ -91,7 +91,7 @@ export class Solver{
           this.maze.map[x][y] = 'correct';
           if(dist[x][y] > max){
             max = dist[x][y];
-            this.maze.score = max*100/dist[que[cnt][0]][que[cnt][1]];
+            this.maze.score = parseInt(max*100/(dist[que[cnt-1][0]][que[cnt-1][1]]+1));
           }
         }else{
           this.maze.map[x][y] = 'answer';

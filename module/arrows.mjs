@@ -26,7 +26,7 @@ export class Arrows {
       this.maze.map[x][y] = 'reached';
       this.drawer.drawSquare(x, y);
       this.maze.charaX--;
-      this.maze.change();
+      this.maze.reachGoal();
     }
   }
 
@@ -49,7 +49,7 @@ export class Arrows {
       this.maze.map[x][y] = 'reached';
       this.drawer.drawSquare(x, y);
       this.maze.charaX++;
-      this.maze.change();
+      this.maze.reachGoal();
     }
   }
 
@@ -72,7 +72,7 @@ export class Arrows {
       this.maze.map[x][y] = 'reached';
       this.drawer.drawSquare(x, y);
       this.maze.charaY--;
-      this.maze.change();
+      this.maze.reachGoal();
     }
   }
 
@@ -95,7 +95,7 @@ export class Arrows {
       this.maze.map[x][y] = 'reached';
       this.drawer.drawSquare(x, y);
       this.maze.charaY++;
-      this.maze.change();
+      this.maze.reachGoal();
     }
   }
 }
