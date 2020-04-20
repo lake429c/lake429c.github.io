@@ -2,161 +2,123 @@ import {Drawer} from './module/drawer.mjs'
 import {Jenerator} from './module/jenerator.mjs'
 import {Tester} from './module/tester.mjs'
 import {Solver} from './module/solver.mjs'
+import {Arrows} from './module/arrows.mjs'
 
 
 let maze = {
-  charaX : 0,
-  charaY : 0,
+  charaX: 0,
+  charaY: 0,
   size: 30,
-  map : []
+  map: []
 };
-let drawer;
+
+let inputMazeSize = new Vue({
+  el: '#mazeSize',
+  watch: {
+    size: function(newVal, oldVal) {
+      this.error.require = (newVal.length < 1) ? true : false;
+      this.error.tooSmall = (newVal.length > 0 && newVal < 5) ? true : false;
+      this.error.tooLarge = (newVal > 500) ? true : false;
+    }
+  },
+  data: {
+    size: 30,
+    error: {
+      require: false,
+      tooSmall: false,
+      tooLarge: false
+    }
+  }
+})
+
+let arsl = new Vue({
+  el: '#arrows',
+  data: {
+    seen: false
+  },
+  methods: {
+    change: function(event){
+      this.seen = true
+    }
+  }
+})
 
 // Jenerateボタンが押されたら，フォームの数値を大きさとして迷路を生成する
 document.getElementById('jenBt').onclick = function(){
 
+  // 入力された迷路のサイズが不正な場合何もしない
+  if(inputMazeSize.error.require || inputMazeSize.error.tooSmall || inputMazeSize.error.tooLarge){
+    return;
+  }
   // 迷路の一辺のサイズ
-  let inputMsg = document.getElementById("mazeSize").value;
+  let inputMsg = inputMazeSize.size;
   maze.size = parseInt(inputMsg, 10);
   // 迷路の状態を格納する正方形の二次元配列
   maze.map = new Array(maze.size);
   for(let i=0;i<maze.size;i++){
-    maze.map[i] = new Array(maze.size).fill(0);
+    maze.map[i] = new Array(maze.size).fill('wall');
   }
 
 
   const jenerator = new Jenerator(maze);
-  drawer = new Drawer(maze, 'maze_canvas');
   // 迷路を生成
   jenerator.jenerateMaze();
-
-  // 迷路に欠陥がないかテスト
-  const tester = new Tester(maze);
-  if(tester.testMaze()){
-    // 問題なければボタンにクリックイベントをつける
-    document.getElementById('solveBt').onclick = function(){
-      const solver = new Solver(maze);
-      solver.solveMaze();
-      drawer.drawMaze();
-    }
-  }else{
-    console.log("Sorry. Please reload this page.");
-  }
 
   // スタート地点を探す
   for(let i=1;i<maze.size-1;i++){
     for(let j=1;j<maze.size-1;j++){
-      if(maze.map[i][j] == 2){
+      if(maze.map[i][j] == 'start'){
         // スタートの隣の通路にキャラを配置
         maze.charaX = i;
         maze.charaY = j;
-        if(maze.map[i-1][j] == 1){
+        if(maze.map[i-1][j] == 'path'){
           maze.charaX--;
-        }else if(maze.map[i+1][j] == 1){
+        }else if(maze.map[i+1][j] == 'path'){
           maze.charaX++;
-        }else if(maze.map[i][j-1] == 1){
+        }else if(maze.map[i][j-1] == 'path'){
           maze.charaY--;
-        }else if(maze.map[i][j+1] == 1){
+        }else if(maze.map[i][j+1] == 'path'){
           maze.charaY++;
         }
       }
     }
   }
-  maze.map[maze.charaX][maze.charaY] = 5;
+  maze.map[maze.charaX][maze.charaY] = 'chara';
 
+  const drawer = new Drawer(maze, 'maze_canvas');
   drawer.drawMaze();
-
+  arsl.change();
 }
 
-// ボタン入力
-document.getElementById('ArrowUp').onclick = arrowUp;
-document.getElementById('ArrowDown').onclick = arrowDown;
-document.getElementById('ArrowLeft').onclick = arrowLeft;
-document.getElementById('ArrowRight').onclick = arrowRight;
-// キー入力
+// solveボタンが押されたら最短路を表示する
+document.getElementById('solveBt').onclick = function(){
+  const solver = new Solver(maze);
+  solver.solveMaze();
+  const drawer = new Drawer(maze, 'maze_canvas');
+  drawer.drawMaze();
+}
+
+// 矢印ボタンが押されたらキャラを動かす
+const arrows = new Arrows(maze);
+document.getElementById('ArrowUp').onclick = arrows.arrowUp;
+document.getElementById('ArrowDown').onclick = arrows.arrowDown;
+document.getElementById('ArrowLeft').onclick = arrows.arrowLeft;
+document.getElementById('ArrowRight').onclick = arrows.arrowRight;
+
+// 矢印キーも矢印ボタンと同様
 document.addEventListener('keydown', (event) => {
   switch (event.key) {
     case "ArrowUp":
-      arrowUp();
+      arrows.arrowUp();
       break;
     case "ArrowDown":
-      arrowDown();
+      arrows.arrowDown();
       break;
     case "ArrowLeft":
-      arrowLeft();
+      arrows.arrowLeft();
       break;
     case "ArrowRight":
-      arrowRight();
+      arrows.arrowRight();
       break;
   }
 });
-
-// 矢印ボタンの実装
-function arrowUp(){
-  let x = maze.charaX, y = maze.charaY;
-  // 行きたい方向が通路やもう通った場所か
-  if(maze.map[x-1][y] == 1){
-    maze.map[x][y] = 6;
-    drawer.drawSquare(x, y);
-    maze.map[x-1][y] = 5;
-    drawer.drawSquare(x-1, y);
-    maze.charaX--;
-  }else if(maze.map[x-1][y] == 6){
-    maze.map[x][y] = 1;
-    drawer.drawSquare(x, y);
-    maze.map[x-1][y] = 5;
-    drawer.drawSquare(x-1, y);
-    maze.charaX--;
-  }
-}
-function arrowDown(){
-  let x = maze.charaX, y = maze.charaY;
-  // 行きたい方向が通路やもう通った場所か
-  if(maze.map[x+1][y] == 1){
-    maze.map[x][y] = 6;
-    drawer.drawSquare(x, y);
-    maze.map[x+1][y] = 5;
-    drawer.drawSquare(x+1, y);
-    maze.charaX++;
-  }else if(maze.map[x+1][y] == 6){
-    maze.map[x][y] = 1;
-    drawer.drawSquare(x, y);
-    maze.map[x+1][y] = 5;
-    drawer.drawSquare(x+1, y);
-    maze.charaX++;
-  }
-}
-function arrowLeft(){
-  let x = maze.charaX, y = maze.charaY;
-  // 行きたい方向が通路やもう通った場所か
-  if(maze.map[x][y-1] == 1){
-    maze.map[x][y] = 6;
-    drawer.drawSquare(x, y);
-    maze.map[x][y-1] = 5;
-    drawer.drawSquare(x, y-1);
-    maze.charaY--;
-  }else if(maze.map[x][y-1] == 6){
-    maze.map[x][y] = 1;
-    drawer.drawSquare(x, y);
-    maze.map[x][y-1] = 5;
-    drawer.drawSquare(x, y-1);
-    maze.charaY--;
-  }
-}
-function arrowRight(){
-  let x = maze.charaX, y = maze.charaY;
-  // 行きたい方向が通路やもう通った場所か
-  if(maze.map[x][y+1] == 1){
-    maze.map[x][y] = 6;
-    drawer.drawSquare(x, y);
-    maze.map[x][y+1] = 5;
-    drawer.drawSquare(x, y+1);
-    maze.charaY++;
-  }else if(maze.map[x][y+1] == 6){
-    maze.map[x][y] = 1;
-    drawer.drawSquare(x, y);
-    maze.map[x][y+1] = 5;
-    drawer.drawSquare(x, y+1);
-    maze.charaY++;
-  }
-}

@@ -13,40 +13,40 @@ export class Drawer {
 
   /*
     迷路のマスの状態
-    0:壁（黒）
-    1:通路（白）
-    2:スタート（赤）
-    3:ゴール（緑）
-    4:最短路（青）
-    5:キャラのいる位置（紫）
-    6:キャラの通った道（ピンク）
-    7:最短路と通った道の重なり（青ピンク）
+    'wall':壁（黒）
+    'path':通路（白）
+    'start':スタート（赤）
+    'goal':ゴール（緑）
+    'answer':最短路（青）
+    'chara':キャラのいる位置（紫）
+    'reached':キャラの通った道（ピンク）
+    'correct':最短路と通った道の重なり（青ピンク）
   */
   drawSquare(x, y){
     // マスの色の決定
     switch (this.maze.map[x][y]) {
-      case 0:
+      case 'wall':
         this.ctx.fillStyle = "rgb(0,0,0)";
         break;
-      case 1:
+      case 'path':
         this.ctx.fillStyle = "rgb(255,255,255)";
         break;
-      case 2:
+      case 'start':
         this.ctx.fillStyle = "rgb(255,0,0)";
         break;
-      case 3:
+      case 'goal':
         this.ctx.fillStyle = "rgb(0,255,0)";
         break;
-      case 4:
+      case 'answer':
         this.ctx.fillStyle = "rgb(0,100,255)";
         break;
-      case 5:
+      case 'chara':
         this.ctx.fillStyle = "rgb(200,0,200)";
         break;
-      case 6:
+      case 'reached':
         this.ctx.fillStyle = "rgb(255,150,150)";
         break;
-      case 7:
+      case 'correct':
         this.ctx.fillStyle = "rgb(127,125,202)";
         break;
     }

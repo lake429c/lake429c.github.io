@@ -3,35 +3,55 @@
   <head>
     <meta charset="utf-8">
     <title>Maze Janerator</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
   </head>
 
   <body>
-    Maze size is :
-    <input id = "mazeSize" type="text" value = "30" size = "3" maxlength="3">
-    <input id = "jenBt" type="button" value="Janerate"></button>
-    <table>
-	    <tbody>
-		    <tr>
-			    <td></td>
-			    <td><input id = "ArrowUp" type="button" value="↑" style="width:40px;height:40px;"></button></td>
-			    <td></td>
-		    </tr>
-		    <tr>
-			    <td><input id = "ArrowLeft" type="button" value="←" style="width:40px;height:40px;"></button></td>
-			    <td></td>
-			    <td><input id = "ArrowRight" type="button" value="→" style="width:40px;height:40px;"></button></td>
-		    </tr>
-        <tr>
-          <td></td>
-          <td><input id = "ArrowDown" type="button" value="↓" style="width:40px;height:40px;"></button></td>
-          <td></td>
-		    </tr>
-	    </tbody>
-    </table>
-    <input id = "solveBt" type="button" value="Solve"></button>
-    <div>
-      <canvas id="maze_canvas">
-      </canvas>
+    <style>
+    #mazeSize .error {
+      color: red;
+    }
+    </style>
+    <h1>
+      自動迷路生成器
+    </h1>
+    <p>
+      自動生成される迷路を解いてみよう！<br>
+      迷路の大きさを決めて，生成ボタンを押すとランダムに迷路が生成されます．<br>
+      赤がスタート，緑がゴール．<br>
+      紫色のキャラクターを動かしてゴールを目指そう！<br>
+      キャラクターは矢印のボタンか，キーボードの矢印キーで動きます．
+    </p>
+    <div id = "mazeSize">
+      迷路の大きさは？（5～500）:
+      <input type="text" v-model = "size" size=3>
+      <input id = "jenBt" type="button" value="生成"></button>
+      <div class="error" v-if="error.require">作りたい迷路の大きさを入力してください</div>
+      <div class="error" v-if="error.tooSmall">小さすぎます</div>
+      <div class="error" v-if="error.tooLarge">大きすぎます</div>
+    </div>
+    <div id="arrows">
+      <table v-show="seen">
+	      <tbody>
+		      <tr>
+		  	    <td></td>
+		  	    <td><input id = "ArrowUp" type="button" value="↑" style="width:40px;height:40px;"></button></td>
+		  	    <td></td>
+		      </tr>
+		      <tr>
+		  	    <td><input id = "ArrowLeft" type="button" value="←" style="width:40px;height:40px;"></button></td>
+		  	    <td></td>
+		  	    <td><input id = "ArrowRight" type="button" value="→" style="width:40px;height:40px;"></button></td>
+		      </tr>
+          <tr>
+            <td></td>
+            <td><input id = "ArrowDown" type="button" value="↓" style="width:40px;height:40px;"></button></td>
+            <td></td>
+		      </tr>
+	      </tbody>
+      </table>
+      <canvas id="maze_canvas"></canvas><br>
+      <input id = "solveBt" v-show="seen" type="button" value="答え"></button>
     </div>
     <script type="module" src="./main.js"></script>
   </body>

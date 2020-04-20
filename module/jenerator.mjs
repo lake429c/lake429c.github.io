@@ -1,12 +1,3 @@
-/*
-  迷路のマスの状態
-  0:壁（黒）
-  1:通路（白）
-  2:スタート（赤）
-  3:ゴール（緑）
-  4:最短路（青）
-*/
-
 export class Jenerator {
 
   constructor(maze){
@@ -32,34 +23,34 @@ export class Jenerator {
     switch (direction) {
       case 0:
         if(y-1 != 0
-          && this.maze.map[x][y-1] == 0
-          && this.maze.map[x][y-2] == 0
-          && this.maze.map[x-1][y-1] == 0
-          && this.maze.map[x+1][y-1] == 0
+          && this.maze.map[x][y-1] == 'wall'
+          && this.maze.map[x][y-2] == 'wall'
+          && this.maze.map[x-1][y-1] == 'wall'
+          && this.maze.map[x+1][y-1] == 'wall'
         ) return true;
         break;
       case 1:
         if(y+1 != this.maze.size-1
-          && this.maze.map[x][y+1] == 0
-          && this.maze.map[x][y+2] == 0
-          && this.maze.map[x-1][y+1] == 0
-          && this.maze.map[x+1][y+1] == 0
+          && this.maze.map[x][y+1] == 'wall'
+          && this.maze.map[x][y+2] == 'wall'
+          && this.maze.map[x-1][y+1] == 'wall'
+          && this.maze.map[x+1][y+1] == 'wall'
         ) return true;
         break;
       case 2:
         if(x-1 != 0
-          && this.maze.map[x-1][y] == 0
-          && this.maze.map[x-2][y] == 0
-          && this.maze.map[x-1][y-1] == 0
-          && this.maze.map[x-1][y+1] == 0
+          && this.maze.map[x-1][y] == 'wall'
+          && this.maze.map[x-2][y] == 'wall'
+          && this.maze.map[x-1][y-1] == 'wall'
+          && this.maze.map[x-1][y+1] == 'wall'
         ) return true;
         break;
       case 3:
         if(x+1 != this.maze.size-1
-          && this.maze.map[x+1][y] == 0
-          && this.maze.map[x+2][y] == 0
-            && this.maze.map[x+1][y-1] == 0
-          && this.maze.map[x+1][y+1] == 0
+          && this.maze.map[x+1][y] == 'wall'
+          && this.maze.map[x+2][y] == 'wall'
+            && this.maze.map[x+1][y-1] == 'wall'
+          && this.maze.map[x+1][y+1] == 'wall'
         ) return true;
         break;
     }
@@ -107,7 +98,7 @@ export class Jenerator {
         x++;
         break;
     }
-    this.maze.map[x][y] = 1;
+    this.maze.map[x][y] = 'path';
 
     if(this.isDigableAround(x,y)){
       this.digable.push([x,y]);
@@ -128,10 +119,10 @@ export class Jenerator {
     }else{
       //スタートの設定
       let indexS = this.getRandomInt(0,this.deadends.length/2);
-      this.maze.map[this.deadends[indexS][0]][this.deadends[indexS][1]] = 2;
+      this.maze.map[this.deadends[indexS][0]][this.deadends[indexS][1]] = 'start';
       // ゴールの設定
       let indexG = this.getRandomInt(this.deadends.length/2,this.deadends.length);
-      this.maze.map[this.deadends[indexG][0]][this.deadends[indexG][1]] = 3;
+      this.maze.map[this.deadends[indexG][0]][this.deadends[indexG][1]] = 'goal';
 
       console.log("Jenerated");
       this.endFlag = false;
@@ -144,7 +135,7 @@ export class Jenerator {
     // 最初に一マス穴開ける
     let x = this.getRandomInt(1,this.maze.size-1);
     let y = this.getRandomInt(1,this.maze.size-1);
-    this.maze.map[x][y] = 1;
+    this.maze.map[x][y] = 'path';
     this.digable.push([x,y]);
     // 穴を掘る
     while(this.endFlag){
