@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8">
     <title>Maze Janerator</title>
+    <!--- Vue.jsを利用する --->
     <script src="https://cdn.jsdelivr.net/npm/vue"></script>
   </head>
 
@@ -10,6 +11,10 @@
     <style>
     #mazeSize .error {
       color: red;
+    }
+    #contents .button {
+      width:40px;
+      height:40px;
     }
     </style>
     <h1>
@@ -23,33 +28,35 @@
       キャラクターは矢印のボタンか，キーボードの矢印キーで動きます．
     </p>
     <div id = "mazeSize">
-      迷路の大きさは？（5～500）:
-      <input type="text" v-model = "size" size=3>
+      迷路の大きさは？（10～500）:
+      <input type="text" v-model="value" size=3>
       <input id = "jenBt" type="button" value="生成"></button>
       <div class="error" v-if="error.require">作りたい迷路の大きさを入力してください</div>
       <div class="error" v-if="error.tooSmall">小さすぎます</div>
       <div class="error" v-if="error.tooLarge">大きすぎます</div>
     </div>
-    <div id="arrows">
-      <table v-show="seen">
+    <div id="contents"><br>
+      <table v-show="able">
 	      <tbody>
 		      <tr>
 		  	    <td></td>
-		  	    <td><input id = "ArrowUp" type="button" value="↑" style="width:40px;height:40px;"></button></td>
+		  	    <td><input class="button" type="button" value="↑" @click="arrowUp"></button></td>
 		  	    <td></td>
 		      </tr>
 		      <tr>
-		  	    <td><input id = "ArrowLeft" type="button" value="←" style="width:40px;height:40px;"></button></td>
+		  	    <td><input class="button" type="button" value="←" @click="arrowLeft"></button></td>
 		  	    <td></td>
-		  	    <td><input id = "ArrowRight" type="button" value="→" style="width:40px;height:40px;"></button></td>
+		  	    <td><input class="button" type="button" value="→" @click="arrowRight"></button></td>
 		      </tr>
           <tr>
             <td></td>
-            <td><input id = "ArrowDown" type="button" value="↓" style="width:40px;height:40px;"></button></td>
+            <td><input class="button" type="button" value="↓" @click="arrowDown"></button></td>
             <td></td>
 		      </tr>
 	      </tbody>
       </table>
+      <div v-show="goalFlg">ゴール！！</div>
+      <div v-show="scoreFlg">得点：{{message}}/100</div>
       <canvas id="maze_canvas"></canvas><br>
       <input id = "solveBt" v-show="seen" type="button" value="答え"></button>
     </div>

@@ -5,26 +5,35 @@ import {Solver} from './module/solver.mjs'
 import {Arrows} from './module/arrows.mjs'
 
 let maze = new Vue({
-  el: '#maze_canvas',
+  el: '#mazeMsg',
   data: {
     charaX: 0,
     charaY: 0,
     size: 30,
-    map: []
+    map: [],
+    score: 0
+  },
+  methods: {
+    change: function(){
+      contents.able = false;
+      contents.goalFlg = true;
+      contents.scoreFlg = true;
+      contents.message = 100;
+    }
   }
 })
 
 let inputMazeSize = new Vue({
   el: '#mazeSize',
   watch: {
-    size: function(newVal, oldVal) {
+    value: function(newVal, oldVal) {
       this.error.require = (newVal.length < 1) ? true : false;
-      this.error.tooSmall = (newVal.length > 0 && newVal < 5) ? true : false;
+      this.error.tooSmall = (newVal.length > 0 && newVal < 10) ? true : false;
       this.error.tooLarge = (newVal > 500) ? true : false;
     }
   },
   data: {
-    size: 30,
+    value: 30,
     error: {
       require: false,
       tooSmall: false,
@@ -33,17 +42,44 @@ let inputMazeSize = new Vue({
   }
 })
 
-let arsl = new Vue({
-  el: '#arrows',
+let arrows;
+let contents = new Vue({
+  el: '#contents',
   data: {
-    seen: false
+    seen: false,
+    able: false,
+    goalFlg: false,
+    scoreFlg: false,
+    message: 0
   },
   methods: {
-    change: function(event){
-      this.seen = true
+    change: function(){
+      this.seen = true;
+      this.able = true;
+      this.goalFlg = false;
+      this.scoreFlg = false;
+    },
+    // 矢印ボタンが押されたらキャラを動かす
+    arrowUp: function(){
+      arrows.arrowUp();
+    },
+    arrowLeft: function(){
+      arrows.arrowLeft();
+    },
+    arrowRight: function(){
+      arrows.arrowRight();
+    },
+    arrowDown: function(){
+      arrows.arrowDown();
     }
   }
 })
+
+function toHankaku(str) {
+  return str.replace(/[Ａ-Ｚａ-ｚ０-９]/g, function(s) {
+      return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
+  });
+}
 
 // Jenerateボタンが押されたら，フォームの数値を大きさとして迷路を生成する
 document.getElementById('jenBt').onclick = function(){
@@ -53,7 +89,8 @@ document.getElementById('jenBt').onclick = function(){
     return;
   }
   // 迷路の一辺のサイズ
-  let inputMsg = inputMazeSize.size;
+  let inputMsg = inputMazeSize.value;
+  //inputMsg =  toHankaku(inputMsg);
   maze.size = parseInt(inputMsg, 10);
   // 迷路の状態を格納する正方形の二次元配列
   maze.map = new Array(maze.size);
@@ -89,30 +126,31 @@ document.getElementById('jenBt').onclick = function(){
 
   const drawer = new Drawer(maze, 'maze_canvas');
   drawer.drawMaze();
-  arsl.change();
+  contents.change();
 
 }
 
 // solveボタンが押されたら最短路を表示する
 document.getElementById('solveBt').onclick = function(){
+  if(contents.goalFlg){
+    return;
+  }
   const solver = new Solver(maze);
   solver.solveMaze();
   const drawer = new Drawer(maze, 'maze_canvas');
   drawer.drawMaze();
+  contents.able = false;
+  contents.scoreFlg = true;
+  contents.message = maze.score;
 }
 
-// 矢印ボタンが押されたらキャラを動かす
-const arrows = new Arrows(maze);
-document.getElementById('ArrowUp').onclick = arrows.arrowUp;
-document.getElementById('ArrowDown').onclick = arrows.arrowDown;
-document.getElementById('ArrowLeft').onclick = arrows.arrowLeft;
-document.getElementById('ArrowRight').onclick = arrows.arrowRight;
-
 // 矢印キーも矢印ボタンと同様
+arrows = new Arrows(maze);
 document.addEventListener('keydown', (event) => {
-  if(!arsl.seen){
+  if(!contents.able){
     return;
   }
+  console.log(event.key);
   switch (event.key) {
     case "ArrowUp":
       arrows.arrowUp();

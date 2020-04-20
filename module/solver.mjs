@@ -72,6 +72,7 @@ export class Solver{
       x = que[cnt][0], y = que[cnt][1];
     }
     // ゴールから最短路をたどる
+    let max = 0;
     while(this.maze.map[x][y] != 'start'){
       if(this.maze.map[x-1][y] != 0 && dist[x-1][y] < dist[x][y]){
         x--;
@@ -88,6 +89,10 @@ export class Solver{
       if(this.maze.map[x][y] != 'start'){
         if(this.maze.map[x][y] == 'reached'){
           this.maze.map[x][y] = 'correct';
+          if(dist[x][y] > max){
+            max = dist[x][y];
+            this.maze.score = max*100/dist[que[cnt][0]][que[cnt][1]];
+          }
         }else{
           this.maze.map[x][y] = 'answer';
         }
