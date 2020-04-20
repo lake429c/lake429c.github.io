@@ -10,34 +10,36 @@ export class Arrows {
   arrowUp(){
     let x = this.maze.charaX, y = this.maze.charaY;
     // 行きたい方向が通路やもう通った場所か
-    if(this.maze.map[x-1][y] == 1){
-      this.maze.map[x][y] = 6;
+    if(this.maze.map[x-1][y] == 'path'){
+      this.maze.map[x][y] = 'reached';
       this.drawer.drawSquare(x, y);
-      this.maze.map[x-1][y] = 5;
+      this.maze.map[x-1][y] = 'chara';
       this.drawer.drawSquare(x-1, y);
       this.maze.charaX--;
-    }else if(this.maze.map[x-1][y] == 6){
-      this.maze.map[x][y] = 1;
+    }else if(this.maze.map[x-1][y] == 'reached'){
+      this.maze.map[x][y] = 'path';
       this.drawer.drawSquare(x, y);
-      this.maze.map[x-1][y] = 5;
+      this.maze.map[x-1][y] = 'chara';
       this.drawer.drawSquare(x-1, y);
       this.maze.charaX--;
+    }else if(this.maze.map[x-1][y] == 'goal'){
+      
     }
   }
 
   arrowDown(){
     let x = this.maze.charaX, y = this.maze.charaY;
     // 行きたい方向が通路やもう通った場所か
-    if(this.maze.map[x+1][y] == 1){
-      this.maze.map[x][y] = 6;
+    if(this.maze.map[x+1][y] == 'path'){
+      this.maze.map[x][y] = 'reached';
       this.drawer.drawSquare(x, y);
-      this.maze.map[x+1][y] = 5;
+      this.maze.map[x+1][y] = 'chara';
       this.drawer.drawSquare(x+1, y);
       this.maze.charaX++;
-    }else if(this.maze.map[x+1][y] == 6){
-      this.maze.map[x][y] = 1;
+    }else if(this.maze.map[x+1][y] == 'reached'){
+      this.maze.map[x][y] = 'path';
       this.drawer.drawSquare(x, y);
-      this.maze.map[x+1][y] = 5;
+      this.maze.map[x+1][y] = 'chara';
       this.drawer.drawSquare(x+1, y);
       this.maze.charaX++;
     }
@@ -46,16 +48,16 @@ export class Arrows {
   arrowLeft(){
     let x = this.maze.charaX, y = this.maze.charaY;
     // 行きたい方向が通路やもう通った場所か
-    if(this.maze.map[x][y-1] == 1){
-      this.maze.map[x][y] = 6;
+    if(this.maze.map[x][y-1] == 'path'){
+      this.maze.map[x][y] = 'reached';
       this.drawer.drawSquare(x, y);
-      this.maze.map[x][y-1] = 5;
+      this.maze.map[x][y-1] = 'chara';
       this.drawer.drawSquare(x, y-1);
       this.maze.charaY--;
-    }else if(this.maze.map[x][y-1] == 6){
-      this.maze.map[x][y] = 1;
+    }else if(this.maze.map[x][y-1] == 'reached'){
+      this.maze.map[x][y] = 'path';
       this.drawer.drawSquare(x, y);
-      this.maze.map[x][y-1] = 5;
+      this.maze.map[x][y-1] = 'chara';
       this.drawer.drawSquare(x, y-1);
       this.maze.charaY--;
     }
@@ -64,18 +66,18 @@ export class Arrows {
   arrowRight(){
     let x = this.maze.charaX, y = this.maze.charaY;
     // 行きたい方向が通路やもう通った場所か
-    if(this.maze.map[x][y+1] == 1){
-      this.maze.map[x][y] = 6;
+    if(this.maze.map[x][y+1] == 'path'){
+      this.maze.map[x][y] = 'reached';
       this.drawer.drawSquare(x, y);
-      this.maze.map[x][y+1] = 5;
+      this.maze.map[x][y+1] = 'chara';
       this.drawer.drawSquare(x, y+1);
       this.maze.charaY++;
-    }else if(this.maze.map[x][y+1] == 6){
-      this.maze.map[x][y] = 1;
+    }else if(this.maze.map[x][y+1] == 'reached'){
+      this.maze.map[x][y] = 'path';
       this.drawer.drawSquare(x, y);
-      this.maze.map[x][y+1] = 5;
+      this.maze.map[x][y+1] = 'chara';
       this.drawer.drawSquare(x, y+1);
-      this.this.maze.charaY++;
+      this.maze.charaY++;
     }
   }
 }

@@ -4,13 +4,15 @@ import {Tester} from './module/tester.mjs'
 import {Solver} from './module/solver.mjs'
 import {Arrows} from './module/arrows.mjs'
 
-
-let maze = {
-  charaX: 0,
-  charaY: 0,
-  size: 30,
-  map: []
-};
+let maze = new Vue({
+  el: '#maze_canvas',
+  data: {
+    charaX: 0,
+    charaY: 0,
+    size: 30,
+    map: []
+  }
+})
 
 let inputMazeSize = new Vue({
   el: '#mazeSize',
@@ -88,6 +90,7 @@ document.getElementById('jenBt').onclick = function(){
   const drawer = new Drawer(maze, 'maze_canvas');
   drawer.drawMaze();
   arsl.change();
+
 }
 
 // solveボタンが押されたら最短路を表示する
@@ -107,6 +110,9 @@ document.getElementById('ArrowRight').onclick = arrows.arrowRight;
 
 // 矢印キーも矢印ボタンと同様
 document.addEventListener('keydown', (event) => {
+  if(!arsl.seen){
+    return;
+  }
   switch (event.key) {
     case "ArrowUp":
       arrows.arrowUp();
