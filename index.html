@@ -1,1 +1,22 @@
-var hand = [Math.floor(Math.random() * 13)+1, Math.floor(Math.random() * 13)+1, Math.floor(Math.random() * 13)+1, Math.floor(Math.random() * 13)+1, Math.floor(Math.random() * 13)+1]; var flg = true; for(var i=0;i<5;i++){if(hand[i] == 11){hand[i] = 'J'}else if(hand[i] == 12){hand[i] = 'Q'}else if(hand[i] == 13){hand[i] = 'K'}; if(i < 4){if(hand[i] != hand[i+1]) flg = false}}; if(flg == true){hand[Math.random() * 5] = '🃏'}; hand
+var hand = new Array(5);
+var flg = true;
+for(var i = 0; i < 5; i++){
+  hand[i] = Math.floor(Math.random() * 13)+1;
+  if(hand[i] == 11){
+    hand[i] = 'J'
+  }else if(hand[i] == 12){
+    hand[i] = 'Q'
+  }else if(hand[i] == 13){
+    hand[i] = 'K'
+  };
+  if(i > 0){
+    if(hand[i] != hand[i-1]) flg = false
+  }
+};
+if(flg == true){
+  hand[Math.random() * 5] = '🃏'
+};
+
+var res;
+res = "[" + hand[0] + "]" + "[" + hand[1] + "]" + "[" + hand[2] + "]" + "[" + hand[3] + "]" + "[" + hand[4] + "]";
+res
