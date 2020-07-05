@@ -21,46 +21,8 @@
       自動迷路生成器
     </h1>
     <p>
-      自動生成される迷路を解いてみよう！<br>
-      迷路の大きさを決めて，生成ボタンを押すとランダムに迷路が生成されます．<br>
-      赤<span style="color:#ff0000">■</span>がスタート，
-      緑<span style="color:#00dd00">■</span>がゴール．<br>
-      紫色<span style="color:#dd00dd">■</span>のキャラクターを動かしてゴールを目指そう！<br>
-      キャラクターは矢印のボタンか，キーボードの矢印キーで動きます．
+      test<br>
     </p>
-    <div id="inputMazeSize">
-      迷路の大きさは？（10～500）:
-      <input type="text" v-model="value" size=3>
-      <input type="button" v-on:click="jenerateClick()" value="生成">
-      <div class="error" v-if="error.require">作りたい迷路の大きさを入力してください</div>
-      <div class="error" v-if="error.tooSmall">小さすぎます</div>
-      <div class="error" v-if="error.tooLarge">大きすぎます</div>
-    </div>
-    <div id="contents"><br>
-      <table v-show="seen">
-	      <tbody>
-		      <tr>
-		  	    <td></td>
-		  	    <td><input class="button" type="button" value="↑" @click="arrowUp"></button></td>
-		  	    <td></td>
-		      </tr>
-		      <tr>
-		  	    <td><input class="button" type="button" value="←" @click="arrowLeft"></button></td>
-		  	    <td></td>
-		  	    <td><input class="button" type="button" value="→" @click="arrowRight"></button></td>
-		      </tr>
-          <tr>
-            <td></td>
-            <td><input class="button" type="button" value="↓" @click="arrowDown"></button></td>
-            <td></td>
-		      </tr>
-	      </tbody>
-      </table>
-      <div v-show="goalFlg">ゴール！！</div>
-      <div v-show="solveFlg">得点：{{score}}/100</div>
-      <canvas id="maze_canvas"></canvas><br>
-      <input type="button" v-show="seen" v-on:click="solveClick()" value="答え"></button>
-    </div>
     <script type="module" src="./main.js"></script>
   </body>
 </html>
