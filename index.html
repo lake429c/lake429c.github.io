@@ -1,16 +1,1 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <title>Nightbot Poker</title>
-    <!--- Vue.jsを利用する --->
-    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
-  </head>
-
-  <body>
-    <p>
-      test<br>
-    </p>
-    <script type="module" src="./main.js"></script>
-  </body>
-</html>
+var hand = [Math.floor(Math.random() * 13)+1, Math.floor(Math.random() * 13)+1, Math.floor(Math.random() * 13)+1, Math.floor(Math.random() * 13)+1, Math.floor(Math.random() * 13)+1]; var flg = true; for(var i=0;i<5;i++){if(hand[i] == 11){hand[i] = 'J'}else if(hand[i] == 12){hand[i] = 'Q'}else if(hand[i] == 13){hand[i] = 'K'}; if(i < 4){if(hand[i] != hand[i+1]) flg = false}}; if(flg == true){hand[Math.random() * 5] = '🃏'}; hand
