@@ -1,17 +1,15 @@
-// 手牌の生成
 var arr = [];
 for(var i = 0; i < 5; i++){
   var tmp_suit = Math.floor(Math.random() * 4);  // 0:♥️,1:♠️,2:♦️,3:♣️
   var tmp_num = Math.floor(Math.random() * 13)+1;
   arr.push({suit: tmp_suit, num: tmp_num});
-}
-// ソート
+};
 arr.sort(function(a,b){
   if(a.num < b.num) return -1;
   if(a.num > b.num) return 1;
   return 0;
 });
-// フラッシュ・ストレート・ロイストの判定
+
 var isFlush = true;
 var isStraight = true;
 var isRoyalStraight = false;
@@ -21,9 +19,9 @@ for(var i = 0; i < arr.length-1; i++){
   var flg2 = ((arr[i+1].num - arr[i].num) == 1);
   if(!flg1) isFlush = false;
   if(!flg2) isStraight = false;
-}
+};
 isRoyalStraight = (arr[0].num==1 && arr[1].num==10 && arr[2].num==11 && arr[3].num==12 && arr[4].num==13);
-// 手牌の判断
+
 var hand = "";
 if(isFlush){
   if(isRoyalStraight){
@@ -69,9 +67,8 @@ if(isFlush){
       hand = "No Pair";
       break;
   }
-}
+};
 
-// 絵文字への変換
 for(var i = 0; i < arr.length; i++){
   if(arr[i].suit == 0){
     arr[i].suit = '♥️';
@@ -89,13 +86,12 @@ for(var i = 0; i < arr.length; i++){
   }else if(arr[i].num == 13){
     arr[i].num = 'K';
   }
-}
+};
 if(isFiveCards){
   arr[4].suit = '🃏';
-}
+};
 
 var tiles;
 tiles = "[" + arr[0].suit + arr[0].num + "]" + "[" + arr[1].suit + arr[1].num + "]" + "[" + arr[2].suit + arr[2].num + "]" + "[" + arr[3].suit + arr[3].num + "]" + "[" + arr[4].suit + (isFiveCards ? "" : arr[4].num) + "]： Your hand is " + hand;
 
 tiles;
-console.log(tiles);
