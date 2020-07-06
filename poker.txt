@@ -1,6 +1,6 @@
 var arr = [];
 for(var i = 0; i < 5; i++){
-  var tmp_suit = Math.floor(Math.random() * 4);  // 0:♥️,1:♠️,2:♦️,3:♣️
+  var tmp_suit = Math.floor(Math.random() * 4);
   var tmp_num = Math.floor(Math.random() * 13)+1;
   arr.push({suit: tmp_suit, num: tmp_num});
 };
