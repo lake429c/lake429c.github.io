@@ -95,5 +95,7 @@ if(isFiveCards){
 }
 
 var tiles;
-tiles = "[" + arr[0].suit + arr[0].num + "]" + "[" + arr[1].suit + arr[1].num + "]" + "[" + arr[2].suit + arr[2].num + "]" + "[" + arr[3].suit + arr[3].num + "]" + "[" + arr[4].suit + (isFiveCards ? "" : arr[4].num) + "]";
-tiles
+tiles = "[" + arr[0].suit + arr[0].num + "]" + "[" + arr[1].suit + arr[1].num + "]" + "[" + arr[2].suit + arr[2].num + "]" + "[" + arr[3].suit + arr[3].num + "]" + "[" + arr[4].suit + (isFiveCards ? "" : arr[4].num) + "]： Your hand is " + hand;
+
+document.write(tiles);
+console.log(tiles);
