@@ -38,11 +38,11 @@ if(isFlush){
 }else if(isStraight){
   hand = "Straight";
 }else{
-  var cnt =0;
-  for(var max = 3; max>=0; max--){
-    var i = 3 -max;
-    for(var j=1; j<=max+1; j++){
-      if(arr[i].num==arr[i+j].num) cnt++;
+  var cnt = 0;
+  for(var max = 3; max >= 0; max--){
+    var i = 3 - max;
+    for(var j = 1; j <= max+1; j++){
+      if(arr[i].num == arr[i+j].num) cnt++;
     }
   }
   switch(cnt){
@@ -83,11 +83,11 @@ for(var i = 0; i < arr.length; i++){
     arr[i].suit = ♣️;
   }
   if(arr[i].num == 11){
-    arr[i].num = 'J'
+    arr[i].num = 'J';
   }else if(arr[i].num == 12){
-    arr[i].num = 'Q'
+    arr[i].num = 'Q';
   }else if(arr[i].num == 13){
-    arr[i].num = 'K'
+    arr[i].num = 'K';
   }
 }
 if(isFiveCards){
