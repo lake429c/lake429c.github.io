@@ -17,3 +17,4 @@ if(isset($_GET["num"]) && !preg_match('/[^0-9]/', $_GET["num"])) {
 
 // 配列をjson形式にデコードして出力, 第二引数は、整形するための定数
 print json_encode($arr, JSON_PRETTY_PRINT);
+returnJson($arr);
