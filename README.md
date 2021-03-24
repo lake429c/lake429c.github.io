@@ -36,4 +36,4 @@ Google Chrome: 81.0.4044.113 (64bit)
 Firefox: 75.0 (64bit)
 
 ## Author
-[木ノ原中也](https://github.com/lake429c)
+[lake429c](https://github.com/lake429c)
