@@ -90,8 +90,12 @@
 				ctx.moveTo(preX, preY);
 				ctx.lineTo(x, y);
 				ctx.lineTo(
-					(x + preX) / 2 + (preY - y) / 2,
-					(y + preY) / 2 + (preX - x) / 2
+					x == preX
+						? (x + preX) / 2 + (preY - y) / 4
+						: x + (preY - y) / 4,
+					x == preX
+						? (y + preY) / 2 + (preX - x) / 4
+						: y + (preX - x) / 4
 				);
 				ctx.fill();
 
