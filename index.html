@@ -19,99 +19,107 @@
     <script defer src="https://pyscript.net/latest/pyscript.js"></script>
     <py-env>
 		- pyodide_js
-        - numpy
     </py-env>
 </head>
 <body>
-
     <canvas id="canvas"></canvas>
 
     <py-script>
-		
-        await js.pyodide.loadPackage("numpy")
+        import js
+        import asyncio
 
-        import numpy as np
-        import random
-        from math import sin, pi
-        from pyscript import display
+        # Load numpy manually using pyodide's API
+        async def load_numpy():
+            await pyodide_js.loadPackage("numpy")
 
-        # Variables
-        width, height = 0, 0
-        running = True
-        fps = 10
-        x = 0
-        position = (0, 0)
+        async def main():
+            # Load numpy before running the application
+            await load_numpy()
 
-        # Initialize color
-        def initial_color():
-            return (
-                255 * (1 + sin(0)) / 2,
-                255 * (1 + sin(2 * pi / 3)) / 2,
-                255 * (1 + sin(4 * pi / 3)) / 2
-            )
+            import numpy as np
+            import random
+            from math import sin, pi
 
-        color_now = initial_color()
+            # Variables
+            width, height = 0, 0
+            running = True
+            fps = 10
+            x = 0
+            position = (0, 0)
 
-        # Update color function
-        def update_color(x):
-            r = 255 * (1 + sin(x)) / 2
-            g = 255 * (1 + sin(x + 2 * pi / 3)) / 2
-            b = 255 * (1 + sin(x + 4 * pi / 3)) / 2
-            return (r, g, b)
+            # Initialize color
+            def initial_color():
+                return (
+                    255 * (1 + sin(0)) / 2,
+                    255 * (1 + sin(2 * pi / 3)) / 2,
+                    255 * (1 + sin(4 * pi / 3)) / 2
+                )
 
-        # Initialize canvas
-        def setup_canvas():
-            global width, height, position
+            color_now = initial_color()
+
+            # Update color function
+            def update_color(x):
+                r = 255 * (1 + sin(x)) / 2
+                g = 255 * (1 + sin(x + 2 * pi / 3)) / 2
+                b = 255 * (1 + sin(x + 4 * pi / 3)) / 2
+                return (r, g, b)
+
+            # Initialize canvas
+            def setup_canvas():
+                global width, height, position
+                canvas = Element("canvas")
+                width = window.innerWidth
+                height = window.innerHeight
+                canvas.element.width = width
+                canvas.element.height = height
+                position = (width // 2, height // 2)
+
+            # Render function
+            def render():
+                global x, color_now, position
+                ctx = canvas.getContext("2d")
+                r, g, b = color_now
+
+                # Draw pixel at current position
+                ctx.fillStyle = f"rgb({int(r)}, {int(g)}, {int(b)})"
+                ctx.fillRect(position[0], position[1], 1, 1)
+
+                # Update position (randomly choose up, down, left, or right)
+                direction = random.choice(['up', 'down', 'left', 'right'])
+                if direction == 'up':
+                    position = (position[0], max(0, position[1] - 1))
+                elif direction == 'down':
+                    position = (position[0], min(height - 1, position[1] + 1))
+                elif direction == 'left':
+                    position = (max(0, position[0] - 1), position[1])
+                elif direction == 'right':
+                    position = (min(width - 1, position[0] + 1), position[1])
+
+                # Update color
+                x += 1
+                color_now = update_color(x)
+
+            # Toggle running state
+            def toggle_running(event):
+                nonlocal running
+                running = not running
+
+            # Main loop
+            def loop():
+                if running:
+                    render()
+                setTimeout(loop, 1000 // fps)
+
+            # Event listeners
             canvas = Element("canvas")
-            width = window.innerWidth
-            height = window.innerHeight
-            canvas.element.width = width
-            canvas.element.height = height
-            position = (width // 2, height // 2)
+            canvas.element.addEventListener("click", toggle_running)
 
-        # Render function
-        def render():
-            global x, color_now, position
-            ctx = canvas.getContext("2d")
-            r, g, b = color_now
+            # Setup and start the loop
+            setup_canvas()
+            loop()
 
-            # Draw pixel at current position
-            ctx.fillStyle = f"rgb({int(r)}, {int(g)}, {int(b)})"
-            ctx.fillRect(position[0], position[1], 1, 1)
-
-            # Update position (randomly choose up, down, left, or right)
-            direction = random.choice(['up', 'down', 'left', 'right'])
-            if direction == 'up':
-                position = (position[0], max(0, position[1] - 1))
-            elif direction == 'down':
-                position = (position[0], min(height - 1, position[1] + 1))
-            elif direction == 'left':
-                position = (max(0, position[0] - 1), position[1])
-            elif direction == 'right':
-                position = (min(width - 1, position[0] + 1), position[1])
-
-            # Update color
-            x += 1
-            color_now = update_color(x)
-
-        # Toggle running state
-        def toggle_running(event):
-            global running
-            running = not running
-
-        # Main loop
-        def loop():
-            if running:
-                render()
-            setTimeout(loop, 1000 // fps)
-
-        # Event listeners
-        canvas = Element("canvas")
-        canvas.element.addEventListener("click", toggle_running)
-
-        # Setup and start the loop
-        setup_canvas()
-        loop()
+        # Run the main function
+        asyncio.ensure_future(main())
     </py-script>
 </body>
 </html>
