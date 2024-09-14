@@ -19,14 +19,19 @@
     <script defer src="https://pyscript.net/latest/pyscript.js"></script>
 </head>
 <body>
-    <py-env>
-        - numpy
-        - random
-    </py-env>
-
     <canvas id="canvas"></canvas>
 
     <py-script>
+        # Import JavaScript modules to load numpy
+        import js
+        
+        async def load_packages():
+            await js.pyodide.loadPackage("numpy")
+            await js.pyodide.loadPackage("random")
+
+        # Load the required packages first
+        await load_packages()
+
         import numpy as np
         import random
         from math import sin, pi
