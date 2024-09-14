@@ -21,13 +21,18 @@
 <body>
     <canvas id="canvas"></canvas>
 
+    <py-env>
+        - numpy
+		- random
+    </py-env>
+
     <py-script>
         import asyncio
         import js
         
-        async def load_packages():
+        <!-- async def load_packages():
             await js.pyodide.loadPackage("numpy")
-            await js.pyodide.loadPackage("random")
+            await js.pyodide.loadPackage("random") -->
 
         async def main():
             # Load the required packages
