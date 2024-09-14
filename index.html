@@ -108,8 +108,10 @@
 
             # Main loop
             def loop():
+				global position
                 if running:
                     render()
+				print(position)
                 setTimeout(loop, 1000 // fps)
 
             # Event listeners
