@@ -97,11 +97,11 @@
 				} else if (x > preX && y > preY) {
 					ctx.lineTo(x - (y - preY) / 2, y - (x - preX) / 2);
 				} else if (x > preX && y < preY) {
-					ctx.lineTo(x + (y - preY) / 2, y - (x - preX) / 2);
-				} else if (x < preX && y > preY) {
 					ctx.lineTo(x - (y - preY) / 2, y + (x - preX) / 2);
+				} else if (x < preX && y > preY) {
+					ctx.lineTo(x + (y - preY) / 2, y - (x - preX) / 2);
 				} else {
-					ctx.lineTo(x + (y - preY) / 2, y + (x - preX) / 2);
+					ctx.lineTo(x - (y - preY) / 2, y - (x - preX) / 2);
 				}
 				ctx.fill();
 
