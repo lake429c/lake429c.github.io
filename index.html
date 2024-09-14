@@ -31,6 +31,8 @@
         let fps = 10;
         let x = Math.floor(canvas.width / 2);
         let y = Math.floor(canvas.height / 2);
+		let preX = x;
+		let preY = y;
 		let stepSize = 10;
         let colorX = 0;
 
@@ -65,7 +67,10 @@
 
             // 現在のピクセルを塗る
             ctx.fillStyle = getColor(colorX);
-            ctx.fillRect(x, y, stepSize, stepSize);
+            ctx.fillRect(Math.min(x, preX), Math.min(y, preY), x == preX ? 1 : stepSize, y == preY ? 1 : stepSize);
+
+			preX = x
+			preY = y
 
             // 次の座標へランダム移動
             moveRandomly();
