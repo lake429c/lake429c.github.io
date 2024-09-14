@@ -1,66 +1,61 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <title>Maze Janerator</title>
-    <!--- Vue.jsを利用する --->
-    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
-  </head>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Color Walker</title>
+		<style>
+			body,
+			html {
+				margin: 0;
+				padding: 0;
+				overflow: hidden;
+				background-color: black;
+			}
+			canvas {
+				display: block;
+			}
+		</style>
+		<link
+			rel="stylesheet"
+			href="https://pyscript.net/latest/pyscript.css"
+		/>
+		<script defer src="https://pyscript.net/latest/pyscript.js"></script>
+	</head>
+	<body>
+		<py-env> - numpy - random </py-env>
 
-  <body>
-    <style>
-    #inputMazeSize .error {
-      color: red;
-    }
-    #contents .button {
-      width:40px;
-      height:40px;
-    }
-    </style>
-    <h1>
-      自動迷路生成器
-    </h1>
-    <p>
-      自動生成される迷路を解いてみよう！<br>
-      迷路の大きさを決めて，生成ボタンを押すとランダムに迷路が生成されます．<br>
-      赤<span style="color:#ff0000">■</span>がスタート，
-      緑<span style="color:#00dd00">■</span>がゴール．<br>
-      紫色<span style="color:#dd00dd">■</span>のキャラクターを動かしてゴールを目指そう！<br>
-      キャラクターは矢印のボタンか，キーボードの矢印キーで動きます．
-    </p>
-    <div id="inputMazeSize">
-      迷路の大きさは？（10～500）:
-      <input type="text" v-model="value" size=3>
-      <input type="button" v-on:click="jenerateClick()" value="生成">
-      <div class="error" v-if="error.require">作りたい迷路の大きさを入力してください</div>
-      <div class="error" v-if="error.tooSmall">小さすぎます</div>
-      <div class="error" v-if="error.tooLarge">大きすぎます</div>
-    </div>
-    <div id="contents"><br>
-      <table v-show="seen">
-	      <tbody>
-		      <tr>
-		  	    <td></td>
-		  	    <td><input class="button" type="button" value="↑" @click="arrowUp"></button></td>
-		  	    <td></td>
-		      </tr>
-		      <tr>
-		  	    <td><input class="button" type="button" value="←" @click="arrowLeft"></button></td>
-		  	    <td></td>
-		  	    <td><input class="button" type="button" value="→" @click="arrowRight"></button></td>
-		      </tr>
-          <tr>
-            <td></td>
-            <td><input class="button" type="button" value="↓" @click="arrowDown"></button></td>
-            <td></td>
-		      </tr>
-	      </tbody>
-      </table>
-      <div v-show="goalFlg">ゴール！！</div>
-      <div v-show="solveFlg">得点：{{score}}/100</div>
-      <canvas id="maze_canvas"></canvas><br>
-      <input type="button" v-show="seen" v-on:click="solveClick()" value="答え"></button>
-    </div>
-    <script type="module" src="./main.js"></script>
-  </body>
+		<canvas id="canvas"></canvas>
+
+		<py-script>
+			import numpy as np import random from math import sin, pi from
+			pyscript import display # Variables width, height = 0, 0 running =
+			True fps = 10 x = 0 position = (0, 0) # Initialize color def
+			initial_color(): return ( 255 * (1 + sin(0)) / 2, 255 * (1 + sin(2 *
+			pi / 3)) / 2, 255 * (1 + sin(4 * pi / 3)) / 2 ) color_now =
+			initial_color() # Update color function def update_color(x): r = 255
+			* (1 + sin(x)) / 2 g = 255 * (1 + sin(x + 2 * pi / 3)) / 2 b = 255 *
+			(1 + sin(x + 4 * pi / 3)) / 2 return (r, g, b) # Initialize canvas
+			def setup_canvas(): global width, height, position canvas =
+			Element("canvas") width = window.innerWidth height =
+			window.innerHeight canvas.element.width = width
+			canvas.element.height = height position = (width // 2, height // 2)
+			# Render function def render(): global x, color_now, position ctx =
+			canvas.getContext("2d") r, g, b = color_now # Draw pixel at current
+			position ctx.fillStyle = f"rgb({int(r)}, {int(g)}, {int(b)})"
+			ctx.fillRect(position[0], position[1], 1, 1) # Update position
+			(randomly choose up, down, left, or right) direction =
+			random.choice(['up', 'down', 'left', 'right']) if direction == 'up':
+			position = (position[0], max(0, position[1] - 1)) elif direction ==
+			'down': position = (position[0], min(height - 1, position[1] + 1))
+			elif direction == 'left': position = (max(0, position[0] - 1),
+			position[1]) elif direction == 'right': position = (min(width - 1,
+			position[0] + 1), position[1]) # Update color x += 1 color_now =
+			update_color(x) # Toggle running state def toggle_running(event):
+			global running running = not running # Main loop def loop(): if
+			running: render() setTimeout(loop, 1000 // fps) # Event listeners
+			canvas = Element("canvas") canvas.element.addEventListener("click",
+			toggle_running) # Setup and start the loop setup_canvas() loop()
+		</py-script>
+	</body>
 </html>
