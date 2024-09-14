@@ -3,106 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Color Walker</title>
+    <title>Random Walk Color Animation</title>
     <style>
         body, html {
             margin: 0;
             padding: 0;
             overflow: hidden;
-            background-color: white;
+            background-color: black;
         }
         canvas {
             display: block;
-			border: 1px solid;
         }
     </style>
-    <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
-    <script defer src="https://pyscript.net/latest/pyscript.js"></script>
 </head>
 <body>
     <canvas id="canvas"></canvas>
 
-    <py-script>
-        import random
-        from math import sin, pi
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
 
-        # Variables
-        width, height = 0, 0
-        running = True
-        fps = 10
-        x = 0
-        position = (0, 0)
+        // フルスクリーンに対応する
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
 
-        # Initialize color
-        def initial_color():
-            return (
-                255 * (1 + sin(0)) / 2,
-                255 * (1 + sin(2 * pi / 3)) / 2,
-                255 * (1 + sin(4 * pi / 3)) / 2
-            )
+        let running = true;
+        let fps = 10;
+        let x = Math.floor(canvas.width / 2);
+        let y = Math.floor(canvas.height / 2);
+        let colorX = 0;
 
-        color_now = initial_color()
+        // 初期色のRGB値を計算
+        function getColor(x) {
+            let r = 255 * (1 + Math.sin(x)) / 2;
+            let g = 255 * (1 + Math.sin(x + (2 * Math.PI / 3))) / 2;
+            let b = 255 * (1 + Math.sin(x + (4 * Math.PI / 3))) / 2;
+            return `rgb(${Math.floor(r)}, ${Math.floor(g)}, ${Math.floor(b)})`;
+        }
 
-        # Update color function
-        def update_color(x):
-            r = 255 * (1 + sin(x)) / 2
-            g = 255 * (1 + sin(x + 2 * pi / 3)) / 2
-            b = 255 * (1 + sin(x + 4 * pi / 3)) / 2
-            return (r, g, b)
+        // ランダムな方向に移動する
+        function moveRandomly() {
+            const directions = [
+                { dx: 0, dy: -1 }, // 上
+                { dx: 0, dy: 1 },  // 下
+                { dx: 1, dy: 0 },  // 右
+                { dx: -1, dy: 0 }  // 左
+            ];
+            const randomDirection = directions[Math.floor(Math.random() * directions.length)];
+            x += randomDirection.dx;
+            y += randomDirection.dy;
 
-        # Initialize canvas
-        def setup_canvas():
-            global width, height, position
-            canvas = js.document.getElementById("canvas")
-            width = js.window.innerWidth
-            height = js.window.innerHeight
-            canvas.width = width
-            canvas.height = height
-            position = (width // 2, height // 2)
+            // 画面外に出ないように調整
+            x = Math.max(0, Math.min(canvas.width - 1, x));
+            y = Math.max(0, Math.min(canvas.height - 1, y));
+        }
 
-        # Render function
-        def render():
-            global x, color_now, position
-            ctx = js.document.getElementById("canvas").getContext("2d")
-            r, g, b = color_now
+        // 描画のループ
+        function draw() {
+            if (!running) return;
 
-            # Draw pixel at current position
-            ctx.fillStyle = f"rgb({int(r)}, {int(g)}, {int(b)})"
-            ctx.fillRect(position[0], position[1], 1, 1)
+            // 現在のピクセルを塗る
+            ctx.fillStyle = getColor(colorX);
+            ctx.fillRect(x, y, 1, 1);
 
-            # Update position (randomly choose up, down, left, or right)
-            direction = random.choice(['up', 'down', 'left', 'right'])
-            if direction == 'up':
-                position = (position[0], max(0, position[1] - 1))
-            elif direction == 'down':
-                position = (position[0], min(height - 1, position[1] + 1))
-            elif direction == 'left':
-                position = (max(0, position[0] - 1), position[1])
-            elif direction == 'right':
-                position = (min(width - 1, position[0] + 1), position[1])
+            // 次の座標へランダム移動
+            moveRandomly();
 
-            # Update color
-            x += 1
-            color_now = update_color(x)
+            // 色を更新
+            colorX += 1;
 
-        # Toggle running state
-        def toggle_running(event):
-            global running
-            running = not running
+            // ループを指定したFPSで実行
+            setTimeout(draw, 1000 / fps);
+        }
 
-        # Main loop
-        def loop():
-            if running:
-                render()
-            js.setTimeout(loop, 1000 // fps)
+        // クリックで停止/再開の切り替え
+        canvas.addEventListener('click', () => {
+            running = !running;
+            if (running) draw();
+        });
 
-        # Event listeners
-        canvas = js.document.getElementById("canvas")
-        canvas.addEventListener("click", toggle_running)
-
-        # Setup and start the loop
-        setup_canvas()
-        loop()
-    </py-script>
+        // 最初の描画
+        draw();
+    </script>
 </body>
 </html>
