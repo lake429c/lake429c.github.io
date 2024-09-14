@@ -17,9 +17,9 @@
     </style>
     <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
     <script defer src="https://pyscript.net/latest/pyscript.js"></script>
-    <py-env>
-		- pyodide_js
-    </py-env>
+	<py-env>
+		- asyncio
+	</py-env>
 </head>
 <body>
     <canvas id="canvas"></canvas>
@@ -27,11 +27,6 @@
     <py-script>
         import js
         import asyncio
-		import pyodide_js
-
-        # Load numpy manually using pyodide's API
-        async def load_numpy():
-            await pyodide_js.loadPackage("numpy")
 
         async def main():
             # Load numpy before running the application
