@@ -59,17 +59,17 @@
             # Initialize canvas
             def setup_canvas():
                 global width, height, position
-                canvas = Element("canvas")
-                width = window.innerWidth
-                height = window.innerHeight
-                canvas.element.width = width
-                canvas.element.height = height
+                canvas = js.document.getElementById("canvas")
+                width = js.window.innerWidth
+                height = js.window.innerHeight
+                canvas.width = width
+                canvas.height = height
                 position = (width // 2, height // 2)
 
             # Render function
             def render():
                 global x, color_now, position
-                ctx = canvas.getContext("2d")
+                ctx = js.document.getElementById("canvas").getContext("2d")
                 r, g, b = color_now
 
                 # Draw pixel at current position
@@ -100,11 +100,11 @@
             def loop():
                 if running:
                     render()
-                setTimeout(loop, 1000 // fps)
+                js.setTimeout(loop, 1000 // fps)
 
             # Event listeners
-            canvas = Element("canvas")
-            canvas.element.addEventListener("click", toggle_running)
+            canvas = js.document.getElementById("canvas")
+            canvas.addEventListener("click", toggle_running)
 
             # Setup and start the loop
             setup_canvas()
