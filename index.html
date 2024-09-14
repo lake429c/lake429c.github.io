@@ -91,11 +91,11 @@
 				ctx.lineTo(x, y);
 				ctx.lineTo(
 					x == preX
-						? (x + preX) / 2 + (preY - y) / 4
-						: x + (preY - y) / 4,
+						? (x + preX) / 2 + (y - preY) / 4
+						: x + (y - preY) / 4,
 					x == preX
-						? (y + preY) / 2 + (preX - x) / 4
-						: y + (preX - x) / 4
+						? (y + preY) / 2 + (x - preX) / 4
+						: y + (x - preX) / 4
 				);
 				ctx.fill();
 
