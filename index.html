@@ -17,114 +17,97 @@
     </style>
     <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
     <script defer src="https://pyscript.net/latest/pyscript.js"></script>
-    <py-env>
-        - numpy
-		<!-- - random -->
-    </py-env>
 </head>
 <body>
+    <py-env>
+        - numpy
+    </py-env>
+
     <canvas id="canvas"></canvas>
 
     <py-script>
-        import asyncio
-        import js
-        
-        <!-- async def load_packages():
-            await js.pyodide.loadPackage("numpy")
-            await js.pyodide.loadPackage("random") -->
+        import numpy as np
+        import random
+        from math import sin, pi
+        from pyscript import display
 
-        async def main():
-            # Load the required packages
-            await load_packages()
+        # Variables
+        width, height = 0, 0
+        running = True
+        fps = 10
+        x = 0
+        position = (0, 0)
 
-            import numpy as np
-            import random
-            from math import sin, pi
-            from pyscript import display
+        # Initialize color
+        def initial_color():
+            return (
+                255 * (1 + sin(0)) / 2,
+                255 * (1 + sin(2 * pi / 3)) / 2,
+                255 * (1 + sin(4 * pi / 3)) / 2
+            )
 
-            # Variables
-            width, height = 0, 0
-            running = True
-            fps = 10
-            x = 0
-            position = (0, 0)
-			print(position)
+        color_now = initial_color()
 
-            # Initialize color
-            def initial_color():
-                return (
-                    255 * (1 + sin(0)) / 2,
-                    255 * (1 + sin(2 * pi / 3)) / 2,
-                    255 * (1 + sin(4 * pi / 3)) / 2
-                )
+        # Update color function
+        def update_color(x):
+            r = 255 * (1 + sin(x)) / 2
+            g = 255 * (1 + sin(x + 2 * pi / 3)) / 2
+            b = 255 * (1 + sin(x + 4 * pi / 3)) / 2
+            return (r, g, b)
 
-            color_now = initial_color()
-
-            # Update color function
-            def update_color(x):
-                r = 255 * (1 + sin(x)) / 2
-                g = 255 * (1 + sin(x + 2 * pi / 3)) / 2
-                b = 255 * (1 + sin(x + 4 * pi / 3)) / 2
-                return (r, g, b)
-
-            # Initialize canvas
-            def setup_canvas():
-                global width, height, position
-                canvas = Element("canvas")
-                width = window.innerWidth
-                height = window.innerHeight
-                canvas.element.width = width
-                canvas.element.height = height
-                position = (width // 2, height // 2)
-
-            # Render function
-            def render():
-                global x, color_now, position
-                ctx = canvas.getContext("2d")
-                r, g, b = color_now
-
-                # Draw pixel at current position
-                ctx.fillStyle = f"rgb({int(r)}, {int(g)}, {int(b)})"
-                ctx.fillRect(position[0], position[1], 1, 1)
-
-                # Update position (randomly choose up, down, left, or right)
-                direction = random.choice(['up', 'down', 'left', 'right'])
-                if direction == 'up':
-                    position = (position[0], max(0, position[1] - 1))
-                elif direction == 'down':
-                    position = (position[0], min(height - 1, position[1] + 1))
-                elif direction == 'left':
-                    position = (max(0, position[0] - 1), position[1])
-                elif direction == 'right':
-                    position = (min(width - 1, position[0] + 1), position[1])
-
-                # Update color
-                x += 1
-                color_now = update_color(x)
-
-            # Toggle running state
-            def toggle_running(event):
-                nonlocal running
-                running = not running
-
-            # Main loop
-            def loop():
-				global position
-                if running:
-                    render()
-				print(position)
-                setTimeout(loop, 1000 // fps)
-
-            # Event listeners
+        # Initialize canvas
+        def setup_canvas():
+            global width, height, position
             canvas = Element("canvas")
-            canvas.element.addEventListener("click", toggle_running)
+            width = window.innerWidth
+            height = window.innerHeight
+            canvas.element.width = width
+            canvas.element.height = height
+            position = (width // 2, height // 2)
 
-            # Setup and start the loop
-            setup_canvas()
-            loop()
+        # Render function
+        def render():
+            global x, color_now, position
+            ctx = canvas.getContext("2d")
+            r, g, b = color_now
 
-        # Ensure the coroutine is scheduled and running
-        asyncio.ensure_future(main())
+            # Draw pixel at current position
+            ctx.fillStyle = f"rgb({int(r)}, {int(g)}, {int(b)})"
+            ctx.fillRect(position[0], position[1], 1, 1)
+
+            # Update position (randomly choose up, down, left, or right)
+            direction = random.choice(['up', 'down', 'left', 'right'])
+            if direction == 'up':
+                position = (position[0], max(0, position[1] - 1))
+            elif direction == 'down':
+                position = (position[0], min(height - 1, position[1] + 1))
+            elif direction == 'left':
+                position = (max(0, position[0] - 1), position[1])
+            elif direction == 'right':
+                position = (min(width - 1, position[0] + 1), position[1])
+
+            # Update color
+            x += 1
+            color_now = update_color(x)
+
+        # Toggle running state
+        def toggle_running(event):
+            global running
+            running = not running
+
+        # Main loop
+        def loop():
+            if running:
+                render()
+            setTimeout(loop, 1000 // fps)
+
+        # Event listeners
+        canvas = Element("canvas")
+        canvas.element.addEventListener("click", toggle_running)
+
+        # Setup and start the loop
+        setup_canvas()
+        loop()
     </py-script>
 </body>
 </html>
