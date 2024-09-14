@@ -30,20 +30,20 @@
 
 			let running = true;
 			let fps = 10;
-      let moveDirectionType = true;
+			let moveDirectionType = true;
 			let x = Math.floor(canvas.width / 2);
 			let y = Math.floor(canvas.height / 2);
-			let preX = x;
-			let preY = y;
 			let stepSize = 10;
 			let colorX = 0;
 
-			// 初期色のRGB値を計算
+			// RGB値を計算
 			function getColor(x) {
 				let r = (255 * (1 + Math.sin(x))) / 2;
 				let g = (255 * (1 + Math.sin(x + (2 * Math.PI) / 3))) / 2;
 				let b = (255 * (1 + Math.sin(x + (4 * Math.PI) / 3))) / 2;
-				return `rgb(${Math.floor(r)}, ${Math.floor(g)}, ${Math.floor(b)})`;
+				return `rgb(${Math.floor(r)}, ${Math.floor(g)}, ${Math.floor(
+					b
+				)})`;
 			}
 
 			// ランダムな方向に移動する
@@ -58,11 +58,16 @@
 					{ dx: 4, dy: -3 }, // 右上
 					{ dx: -4, dy: -3 }, // 左上
 				];
-				const randomDirection =
-        moveDirectionType ? directions1[Math.floor(Math.random() * directions1.length)] : directions2[Math.floor(Math.random() * directions2.length)];
+				const randomDirection = moveDirectionType
+					? directions1[
+							Math.floor(Math.random() * directions1.length)
+					  ]
+					: directions2[
+							Math.floor(Math.random() * directions2.length)
+					  ];
 				x += randomDirection.dx * stepSize;
 				y += randomDirection.dy * stepSize;
-        moveDirectionType = !moveDirectionType;
+				moveDirectionType = !moveDirectionType;
 
 				// 画面外に出ないように調整
 				x = Math.max(0, Math.min(canvas.width - 1, x));
@@ -73,18 +78,18 @@
 			function draw() {
 				if (!running) return;
 
-				// 現在のピクセルを塗る
-				ctx.fillStyle = getColor(colorX);
-        ctx.beginPath();
-        ctx.moveTo(preX, preY);
-        ctx.lineTo(x, y);
-        ctx.fill();
-
-				preX = x;
-				preY = y;
+				let preX = x;
+				let preY = y;
 
 				// 次の座標へランダム移動
 				moveRandomly();
+
+				// 塗る
+				ctx.fillStyle = getColor(colorX);
+				ctx.beginPath();
+				ctx.moveTo(preX, preY);
+				ctx.lineTo(x, y);
+				ctx.fill();
 
 				// 色を更新
 				colorX += 1;
