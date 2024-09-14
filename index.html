@@ -97,9 +97,9 @@
 				} else if (x > preX && y > preY) {
 					ctx.lineTo(x - (y - preY) / 2, y - (x - preX) / 2);
 				} else if (x > preX && y < preY) {
-					ctx.lineTo(x + (y - preY) / 2, y - (x - preX) / 2);
+					ctx.lineTo(preX + (y - preY) / 2, preY + (x - preX) / 2);
 				} else if (x < preX && y > preY) {
-					ctx.lineTo(x + (y - preY) / 2, y - (x - preX) / 2);
+					ctx.lineTo(preX + (y - preY) / 2, preY + (x - preX) / 2);
 				} else {
 					ctx.lineTo(x - (y - preY) / 2, y - (x - preX) / 2);
 				}
