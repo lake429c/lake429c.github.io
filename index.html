@@ -91,11 +91,15 @@
 				ctx.lineTo(x, y);
 				if (x == preX) {
 					ctx.lineTo(
-						(x + preX) / 2 + (y - preY) / 4,
-						(y + preY) / 2 + (x - preX) / 4
+						(x + preX) / 2 + (y - preY) / 8,
+						(y + preY) / 2 + (x - preX) / 8
 					);
-				} else if (x - preX > 0) {
+				} else if (x > preX && y > preY) {
 					ctx.lineTo(x - (y - preY) / 2, y - (x - preX) / 2);
+				} else if (x > preX && y < preY) {
+					ctx.lineTo(x + (y - preY) / 2, y - (x - preX) / 2);
+				} else if (x < preX && y > preY) {
+					ctx.lineTo(x - (y - preY) / 2, y + (x - preX) / 2);
 				} else {
 					ctx.lineTo(x + (y - preY) / 2, y + (x - preX) / 2);
 				}
