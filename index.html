@@ -31,6 +31,7 @@
         let fps = 10;
         let x = Math.floor(canvas.width / 2);
         let y = Math.floor(canvas.height / 2);
+		let stepSize = 10;
         let colorX = 0;
 
         // 初期色のRGB値を計算
@@ -50,8 +51,8 @@
                 { dx: -1, dy: 0 }  // 左
             ];
             const randomDirection = directions[Math.floor(Math.random() * directions.length)];
-            x += randomDirection.dx;
-            y += randomDirection.dy;
+            x += randomDirection.dx * stepSize;
+            y += randomDirection.dy * stepSize;
 
             // 画面外に出ないように調整
             x = Math.max(0, Math.min(canvas.width - 1, x));
@@ -64,7 +65,7 @@
 
             // 現在のピクセルを塗る
             ctx.fillStyle = getColor(colorX);
-            ctx.fillRect(x, y, 1, 1);
+            ctx.fillRect(x, y, stepSize, stepSize);
 
             // 次の座標へランダム移動
             moveRandomly();
