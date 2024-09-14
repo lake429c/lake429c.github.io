@@ -33,7 +33,7 @@
 			let moveDirectionType = true;
 			let x = Math.floor(canvas.width / 2);
 			let y = Math.floor(canvas.height / 2);
-			let stepSize = 10;
+			let stepSize = 5;
 			let colorX = 0;
 
 			// RGB値を計算
@@ -92,10 +92,10 @@
 				ctx.lineTo(
 					x == preX
 						? (x + preX) / 2 + (y - preY) / 4
-						: x + (y - preY) / 4,
+						: x + (y - preY) / 2,
 					x == preX
 						? (y + preY) / 2 + (x - preX) / 4
-						: y + (x - preX) / 4
+						: y + (x - preX) / 2
 				);
 				ctx.fill();
 
