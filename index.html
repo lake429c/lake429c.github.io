@@ -1,95 +1,106 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Random Walk Color Animation</title>
-    <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            background-color: black;
-        }
-        canvas {
-            display: block;
-        }
-    </style>
-</head>
-<body>
-    <canvas id="canvas"></canvas>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Random Walk Color Animation</title>
+		<style>
+			body,
+			html {
+				margin: 0;
+				padding: 0;
+				overflow: hidden;
+				background-color: black;
+			}
+			canvas {
+				display: block;
+			}
+		</style>
+	</head>
+	<body>
+		<canvas id="canvas"></canvas>
 
-    <script>
-        const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext('2d');
+		<script>
+			const canvas = document.getElementById("canvas");
+			const ctx = canvas.getContext("2d");
 
-        // フルスクリーンに対応する
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+			// フルスクリーンに対応する
+			canvas.width = window.innerWidth;
+			canvas.height = window.innerHeight;
 
-        let running = true;
-        let fps = 10;
-        let x = Math.floor(canvas.width / 2);
-        let y = Math.floor(canvas.height / 2);
-		let preX = x;
-		let preY = y;
-		let stepSize = 10;
-        let colorX = 0;
+			let running = true;
+			let fps = 10;
+      let moveDirectionType = true;
+			let x = Math.floor(canvas.width / 2);
+			let y = Math.floor(canvas.height / 2);
+			let preX = x;
+			let preY = y;
+			let stepSize = 10;
+			let colorX = 0;
 
-        // 初期色のRGB値を計算
-        function getColor(x) {
-            let r = 255 * (1 + Math.sin(x)) / 2;
-            let g = 255 * (1 + Math.sin(x + (2 * Math.PI / 3))) / 2;
-            let b = 255 * (1 + Math.sin(x + (4 * Math.PI / 3))) / 2;
-            return `rgb(${Math.floor(r)}, ${Math.floor(g)}, ${Math.floor(b)})`;
-        }
+			// 初期色のRGB値を計算
+			function getColor(x) {
+				let r = (255 * (1 + Math.sin(x))) / 2;
+				let g = (255 * (1 + Math.sin(x + (2 * Math.PI) / 3))) / 2;
+				let b = (255 * (1 + Math.sin(x + (4 * Math.PI) / 3))) / 2;
+				return `rgb(${Math.floor(r)}, ${Math.floor(g)}, ${Math.floor(b)})`;
+			}
 
-        // ランダムな方向に移動する
-        function moveRandomly() {
-            const directions = [
-                { dx: 0, dy: -1 }, // 上
-                { dx: 0, dy: 1 },  // 下
-                { dx: 1, dy: 0 },  // 右
-                { dx: -1, dy: 0 }  // 左
-            ];
-            const randomDirection = directions[Math.floor(Math.random() * directions.length)];
-            x += randomDirection.dx * stepSize;
-            y += randomDirection.dy * stepSize;
+			// ランダムな方向に移動する
+			function moveRandomly() {
+				const directions1 = [
+					{ dx: 0, dy: -5 }, // 上
+					{ dx: 4, dy: 3 }, // 右下
+					{ dx: -4, dy: 3 }, // 左下
+				];
+				const directions2 = [
+					{ dx: 0, dy: 5 }, // 下
+					{ dx: 4, dy: -3 }, // 右上
+					{ dx: -4, dy: -3 }, // 左上
+				];
+				const randomDirection =
+        moveDirectionType ? directions1[Math.floor(Math.random() * directions1.length)] : directions2[Math.floor(Math.random() * directions2.length)];
+				x += randomDirection.dx * stepSize;
+				y += randomDirection.dy * stepSize;
+        moveDirectionType = !moveDirectionType;
 
-            // 画面外に出ないように調整
-            x = Math.max(0, Math.min(canvas.width - 1, x));
-            y = Math.max(0, Math.min(canvas.height - 1, y));
-        }
+				// 画面外に出ないように調整
+				x = Math.max(0, Math.min(canvas.width - 1, x));
+				y = Math.max(0, Math.min(canvas.height - 1, y));
+			}
 
-        // 描画のループ
-        function draw() {
-            if (!running) return;
+			// 描画のループ
+			function draw() {
+				if (!running) return;
 
-            // 現在のピクセルを塗る
-            ctx.fillStyle = getColor(colorX);
-            ctx.fillRect(Math.min(x, preX), Math.min(y, preY), x == preX ? 1 : stepSize, y == preY ? 1 : stepSize);
+				// 現在のピクセルを塗る
+				ctx.fillStyle = getColor(colorX);
+        ctx.beginPath();
+        ctx.moveTo(preX, preY);
+        ctx.lineTo(x, y);
+        ctx.fill();
 
-			preX = x
-			preY = y
+				preX = x;
+				preY = y;
 
-            // 次の座標へランダム移動
-            moveRandomly();
+				// 次の座標へランダム移動
+				moveRandomly();
 
-            // 色を更新
-            colorX += 1;
+				// 色を更新
+				colorX += 1;
 
-            // ループを指定したFPSで実行
-            setTimeout(draw, 1000 / fps);
-        }
+				// ループを指定したFPSで実行
+				setTimeout(draw, 1000 / fps);
+			}
 
-        // クリックで停止/再開の切り替え
-        canvas.addEventListener('click', () => {
-            running = !running;
-            if (running) draw();
-        });
+			// クリックで停止/再開の切り替え
+			canvas.addEventListener("click", () => {
+				running = !running;
+				if (running) draw();
+			});
 
-        // 最初の描画
-        draw();
-    </script>
-</body>
+			// 最初の描画
+			draw();
+		</script>
+	</body>
 </html>
