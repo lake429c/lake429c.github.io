@@ -70,20 +70,11 @@
 				moveDirectionType = !moveDirectionType;
 
 				// 画面外に出ないように調整
-				x = Math.max(0, Math.min(canvas.width - 1, x));
-				y = Math.max(0, Math.min(canvas.height - 1, y));
+				//x = Math.max(0, Math.min(canvas.width - 1, x));
+				//y = Math.max(0, Math.min(canvas.height - 1, y));
 			}
 
-			// 描画のループ
-			function draw() {
-				if (!running) return;
-
-				let preX = x;
-				let preY = y;
-
-				// 次の座標へランダム移動
-				moveRandomly();
-
+      function fillTriangle(preX, preY) {
 				// 塗る
 				ctx.fillStyle = getColor(colorX);
 				ctx.beginPath();
@@ -100,6 +91,39 @@
 					ctx.lineTo(preX - (y - preY) / 2, preY - (x - preX) / 2);
 				}
 				ctx.fill();
+      }
+
+			// 描画のループ
+			function draw() {
+				if (!running) return;
+
+				let preX = x;
+				let preY = y;
+
+				// 次の座標へランダム移動
+				moveRandomly();
+
+        // 塗る
+        fillTriangle(preX, preY)
+
+        // ウィンドウ端を越えていた場合は補正する
+        if (x < 0) {
+          x += canvas.width - 1;
+          preX += canvas.width - 1;
+        } else if (x > canvas.width - 1){
+          x -= canvas.width - 1;
+          preX -= canvas.width - 1;
+        }
+        if (y < 0) {
+          y += canvas.height - 1;
+          preY += canvas.height - 1;
+        } else if (y > canvas.height - 1){
+          y -= canvas.height - 1;
+          preY -= canvas.height - 1;
+        }
+        
+        // 塗る（補正分）
+        fillTriangle(preX, preY)
 
 				// 色を更新
 				colorX += Math.PI / 360;
