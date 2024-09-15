@@ -80,10 +80,10 @@
 				ctx.beginPath();
 				ctx.moveTo(preX, preY);
 				ctx.lineTo(x, y);
-				if (x == preX) {
+				if ((x - preX) * (y - preY) == 0) {
 					ctx.lineTo(
-						(x + preX) / 2 + (y - preY) / 8,
-						(y + preY) / 2 + (x - preX) / 8
+						(x + preX) / 2 + ((y - preY) * 3) / 8,
+						(y + preY) / 2 + ((x - preX) * 3) / 8
 					);
 				} else if ((x - preX) * (y - preY) > 0) {
 					ctx.lineTo(x - (y - preY) / 2, y - (x - preX) / 2);
